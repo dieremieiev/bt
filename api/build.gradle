@@ -5,7 +5,7 @@ apply plugin: 'appengine'
 //noinspection GroovyUnusedAssignment
 def appId = "bt05062016"
 def appEmail = "dmytro.ieremieiev@gmail.com"
-def appengineVersion = "1.9.37"
+def appengineVersion = "1.9.38"
 
 repositories {
     mavenLocal()
@@ -53,6 +53,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 war {
     from '../ui'
     exclude('**/node_modules/**')
+    exclude('**/bower_components/ace-builds/demo/**')
 }
 
 appengine {
