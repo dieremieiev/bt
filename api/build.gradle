@@ -65,9 +65,4 @@ appengine {
         email = "${appEmail}"
         oauth2= true
     }
-
-//    endpoints {
-//        getClientLibsOnBuild = true
-//        getDiscoveryDocsOnBuild = true
-//    }
 }
