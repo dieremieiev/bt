@@ -13,11 +13,26 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body ng-app="app" ng-controller="AppController" ng-cloak ng-enter>
+  <md-toolbar layout="row">
+    <h1>BT</h1>
+  </md-toolbar>
+
+  <section layout="column" class="h80p">
+    <md-content class="h100p">
+      <div id="editor" class="h100p">function foo(items) {
+  var x = "All this is syntax highlighted";
+  return x;
+}
+</div>
+    </md-content>
+  </section>
+
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-animate/angular-animate.js"></script>
   <script src="bower_components/angular-aria/angular-aria.js"></script>
   <script src="bower_components/angular-messages/angular-messages.js"></script>
   <script src="bower_components/angular-material/angular-material.js"></script>
+  <script src="bower_components/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <script src="app/boot.js"></script>
 </body>
 </html>
