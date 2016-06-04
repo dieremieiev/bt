@@ -1,0 +1,26 @@
+{
+  "bugs": {
+    "url": "https://github.com/dieremieiev/wb/issues"
+  },
+  "contributors": [
+    { "name": "dieremieiev" },
+    { "name": "tvvlab" }
+  ],
+  "description": "Wordbook",
+  "devDependencies": {
+    "lite-server": "2.2.0"
+  },
+  "homepage": "https://github.com/dieremieiev/wb",
+  "name": "wb",
+  "license": "GPL-3.0",
+  "main": "js/boot.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dieremieiev/wb.git"
+  },
+  "scripts": {
+    "lite": "lite-server",
+    "start": "npm run lite"
+  },
+  "version": "0.0.1"
+}

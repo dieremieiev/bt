@@ -1,0 +1,7 @@
+.gradle
+.idea
+api/build
+cli/build
+cli/src/main/resources/top100_saved.yaml
+ui/bower_components
+ui/node_modules
