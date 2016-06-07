@@ -12,20 +12,18 @@
   <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body ng-app="app" ng-controller="AppController" ng-cloak ng-enter>
-  <md-toolbar layout="row">
-    <h1>BT</h1>
-  </md-toolbar>
+<body>
+  <div ng-app="app" ng-controller="AppController" layout="column" class="h100p" ng-cloak>
+    <md-toolbar layout="row" layout-align="none center">BT</md-toolbar>
 
-  <section layout="column" class="h80p">
-    <md-content class="h100p">
-      <div id="editor" class="h100p" ng-cloak>function foo(items) {
-  var x = "All this is syntax highlighted";
-  return x;
-}
-</div>
-    </md-content>
-  </section>
+    <div layout="row" class="h100p">
+      <div id="editor" flex></div>
+
+      <div flex>
+        TODO: chat
+      </div>
+    </div>
+  </div>
 
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-animate/angular-animate.js"></script>
