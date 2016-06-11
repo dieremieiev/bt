@@ -10,6 +10,7 @@
   <meta http-equiv="pragma" content="no-cache"/>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+  <link rel="stylesheet" href="bower_components/angular-material-icons/angular-material-icons.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -19,37 +20,32 @@
     <div layout="row" class="h100p">
       <div id="editor" flex></div>
 
-      <div flex>
+      <div flex layout="column">
         <md-content flex>
           <md-list>
-            <md-list-item class="md-3-line md-long-text">
-              <div class="md-list-item-text">
-                <h3>XXX</h3>
-                <p>
-                  Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam.
-                  Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum
-                  velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-                </p>
-              </div>
-            </md-list-item>
-            <md-list-item class="md-3-line md-long-text">
-              <div class="md-list-item-text">
-                <h3>XXX</h3>
-                <p>
-                  Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam.
-                  Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum
-                  velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-                </p>
+            <md-list-item class="md-2-line" ng-repeat="item in messages">
+              <ng-md-icon icon="date_range" size="32" ng-if="item.actor=='teacher'"></ng-md-icon>
+              <ng-md-icon icon="person"     size="32" ng-if="item.actor=='person'">></ng-md-icon>
+              <ng-md-icon icon="adb"        size="32" ng-if="item.actor=='bot'">></ng-md-icon>
+              <div class="md-list-item-text" layout="column">
+                <h4>{{item.name}}</h4>
+                <p>{{item.message}}</p>
               </div>
             </md-list-item>
           </md-list>
+          <a id="chatBottom"></a>
         </md-content>
-        <form>
-          <md-input-container class="md-block">
-            <label>Enter message</label>
-            <input type="text" md-autofocus ng-model="textInput">
-          </md-input-container>
-        </form>
+
+        <div layout="row" layout-padding>
+          <div>
+            <ng-md-icon icon="person" size="32"></ng-md-icon>
+          </div>
+          <form flex ng-enter>
+            <md-input-container class="md-block">
+              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="inputText">
+            </md-input-container>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -59,6 +55,7 @@
   <script src="bower_components/angular-aria/angular-aria.js"></script>
   <script src="bower_components/angular-messages/angular-messages.js"></script>
   <script src="bower_components/angular-material/angular-material.js"></script>
+  <script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
   <script src="bower_components/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <script src="bower_components/lzjs/lzjs.min.js"></script>
   <script src="app/boot.js"></script>

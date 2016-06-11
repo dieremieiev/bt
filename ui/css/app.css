@@ -1,3 +1,20 @@
-md-toolbar { padding-left: 1em; }
+/* Angular CSS fixes */
+
+/* See: https://docs.angularjs.org/api/ng/directive/ngCloak */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+/* Generic CSS */
 
 .h100p { height: 100%; }
+
+/* BT CSS */
+
+md-input-container { margin: 0; }
+
+md-toolbar { padding-left: 1em; }
+
+ng-md-icon { color: gray; }
+
+.md-char-counter { color: gray; }
