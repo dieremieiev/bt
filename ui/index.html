@@ -20,7 +20,7 @@
     <div layout="row" class="h100p">
       <div id="editor" flex></div>
 
-      <div flex layout="column">
+      <div flex layout="column" ng-click="setFocusOnChat()">
         <md-virtual-repeat-container id="chatContainer" md-auto-shrink="true" flex>
           <md-list-item class="md-2-line" md-virtual-repeat="item in model.messages">
             <ng-md-icon icon="date_range" size="32" ng-if="item.actor=='teacher'"></ng-md-icon>
@@ -37,9 +37,9 @@
           <div>
             <ng-md-icon icon="person" size="32"></ng-md-icon>
           </div>
-          <form flex ng-enter>
+          <form flex>
             <md-input-container class="md-block">
-              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="model.inputText">
+              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="model.inputText" ng-keydown="onInputTextKeyDown($event)">
             </md-input-container>
           </form>
         </div>
@@ -55,8 +55,9 @@
   <script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
   <script src="bower_components/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <script src="bower_components/lzjs/lzjs.min.js"></script>
-  <script src="app/boot.js"></script>
   <script src="app/state.js"></script>
   <script src="app/course.js"></script>
+  <script src="app/appcontroller.js"></script>
+  <script src="app/boot.js"></script>
 </body>
 </html>
