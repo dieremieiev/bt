@@ -12,9 +12,8 @@
 /* BT CSS */
 
 md-input-container { margin: 0; }
+ng-md-icon         { color: gray; }
+.md-char-counter   { color: gray; }
 
-md-toolbar { padding-left: 1em; }
-
-ng-md-icon { color: gray; }
-
-.md-char-counter { color: gray; }
+.logo    { padding-left: 1em; }
+.version { font-size: 0.7em; margin-top: -2.5em; padding-right: 0.5em; }

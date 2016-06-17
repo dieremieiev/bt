@@ -4,24 +4,57 @@
 
 'use strict';
 
-function AppController($scope, $timeout)
+function AppController()
 {
   this.initModel()
   this.initEditor()
-
-  $scope.model = this.model
-
-  var self = this
-
-  // TODO: call ctrl.onInputTextKeyDown() in HTML instead of scope.onInputTextKeyDown()
-
-  $scope.onInputTextKeyDown = function(event) { self.onInputTextKeyDown(event) }
-
-  $scope.setFocusOnChat = AppController.prototype.setFocusOnChat
-
   this.initUI()
   this.scrollBottom()
   this.setFocusOnChat()
+}
+
+
+/*******************************************************************************
+ * Public
+ ******************************************************************************/
+
+AppController.prototype.getMessageActor = function(message)
+{
+  return this.model.actors[message[0]]
+}
+
+AppController.prototype.getMessageIcon = function(message)
+{
+  if (message[0] === 0) { return 'date_range' }
+  if (message[0] === 1) { return 'person' }
+
+  return 'adb'
+}
+
+AppController.prototype.getMessageText = function(message)
+{
+  return message[1]
+}
+
+AppController.prototype.onInputTextKeyDown = function(event)
+{
+  if (event.which !== 13) { return; }
+
+  var s = this.model.inputText
+  if (s == null || s.trim().length === 0) { return; }
+
+  this.model.messages.push([1, s])
+
+  this.model.inputText = null
+
+  this.scrollBottom()
+}
+
+AppController.prototype.setFocusOnChat = function()
+{
+  setTimeout(function() {
+    document.getElementById('inputText').focus()
+  }, 100)
 }
 
 
@@ -44,49 +77,29 @@ AppController.prototype.initEditor = function()
 AppController.prototype.initModel = function()
 {
   this.model = {
+    actors: ['Карл', 'Дима', 'MyBot'],
     inputText: null,
     messages: [
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Это текст, который написал бот-учитель'},
-      {'actor': 'person' , 'name': 'Дима' , 'message': 'Это текст, который написал человек-студент'},
-      {'actor': 'bot'    , 'name': 'MyBot', 'message': 'Старт'},
-      {'actor': 'bot'    , 'name': 'MyBot', 'message': 'Привет, босс!'},
-      {'actor': 'bot'    , 'name': 'MyBot', 'message': 'Стоп'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Отлично! Урок выполнен. Переходим к следующему уроку? И вообще это тест длинного текста, который написал бот-учитель.'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Или не переходим к следующему уроку?'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Предлагаю таки продолжить!'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Бесполезное сообщение для теста скроллинга 1'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Бесполезное сообщение для теста скроллинга 2'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Бесполезное сообщение для теста скроллинга 3'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Бесполезное сообщение для теста скроллинга 4'},
-      {'actor': 'teacher', 'name': 'Карл' , 'message': 'Бесполезное сообщение для теста скроллинга 5'}
+      [0, 'Это текст, который написал бот-учитель'],
+      [1, 'Это текст, который написал человек-студент'],
+      [2, 'Старт'],
+      [2, 'Привет, босс!'],
+      [2, 'Стоп'],
+      [0, 'Отлично! Урок выполнен. Переходим к следующему уроку? И вообще это тест длинного текста, который написал бот-учитель.'],
+      [0, 'Или не переходим к следующему уроку?'],
+      [0, 'Предлагаю таки продолжить!'],
+      [0, 'Бесполезное сообщение для теста скроллинга 1'],
+      [0, 'Бесполезное сообщение для теста скроллинга 2'],
+      [0, 'Бесполезное сообщение для теста скроллинга 3'],
+      [0, 'Бесполезное сообщение для теста скроллинга 4'],
+      [0, 'Бесполезное сообщение для теста скроллинга 5']
     ]
   }
 }
 
-AppController.prototype.onInputTextKeyDown = function(event)
-{
-  if (event.which !== 13) { return; }
-
-  var s = this.model.inputText
-  if (s == null || s.trim().length == 0) { return; }
-
-  this.model.messages.push({
-    'actor': 'person', 'name': 'Дима', 'message': s
-  })
-
-  this.model.inputText = null
-
-  AppController.prototype.scrollBottom()
-}
-
-
-/*******************************************************************************
- * Private - UI
- ******************************************************************************/
-
 AppController.prototype.initUI = function()
 {
-  window.onresize = AppController.prototype.scrollBottom
+  window.onresize = this.scrollBottom
 }
 
 AppController.prototype.scrollBottom = function()
@@ -100,12 +113,5 @@ AppController.prototype.scrollBottom = function()
       var d = o.children[0]
       d.scrollTop = d.scrollHeight - d.offsetHeight
     }, 100)
-  }, 100)
-}
-
-AppController.prototype.setFocusOnChat = function()
-{
-  setTimeout(function() {
-    document.getElementById('inputText').focus()
   }, 100)
 }

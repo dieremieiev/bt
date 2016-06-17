@@ -14,21 +14,23 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <div ng-app="app" ng-controller="AppController" layout="column" class="h100p" ng-cloak>
-    <md-toolbar layout="row" layout-align="none center">BT</md-toolbar>
+  <div ng-app="app" ng-controller="AppController as ac" layout="column" class="h100p" ng-cloak>
+    <md-toolbar layout="row" layout-align="none center">
+      <div class="logo">BT</div>
+      <div flex></div>
+      <div class="version">v0.0.1</div>
+    </md-toolbar>
 
     <div layout="row" class="h100p">
       <div id="editor" flex></div>
 
-      <div flex layout="column" ng-click="setFocusOnChat()">
+      <div flex layout="column" ng-click="ac.setFocusOnChat()">
         <md-virtual-repeat-container id="chatContainer" md-auto-shrink="true" flex>
-          <md-list-item class="md-2-line" md-virtual-repeat="item in model.messages">
-            <ng-md-icon icon="date_range" size="32" ng-if="item.actor=='teacher'"></ng-md-icon>
-            <ng-md-icon icon="person"     size="32" ng-if="item.actor=='person'">></ng-md-icon>
-            <ng-md-icon icon="adb"        size="32" ng-if="item.actor=='bot'">></ng-md-icon>
+          <md-list-item class="md-2-line" md-virtual-repeat="m in ac.model.messages">
+            <ng-md-icon icon="{{ac.getMessageIcon(m)}}" size="32"></ng-md-icon>
             <div class="md-list-item-text" layout="column">
-              <h4>{{item.name}}</h4>
-              <p>{{item.message}}</p>
+              <h4>{{ac.getMessageActor(m)}}</h4>
+              <p>{{ac.getMessageText(m)}}</p>
             </div>
           </md-list-item>
         </md-virtual-repeat-container>
@@ -39,7 +41,7 @@
           </div>
           <form flex>
             <md-input-container class="md-block">
-              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="model.inputText" ng-keydown="onInputTextKeyDown($event)">
+              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="ac.model.inputText" ng-keydown="ac.onInputTextKeyDown($event)">
             </md-input-container>
           </form>
         </div>
