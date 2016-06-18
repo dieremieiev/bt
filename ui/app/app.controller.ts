@@ -4,13 +4,15 @@ namespace BT.Controllers {
      * Main
      **************************************************************************/
 
-    public model
+    public model: any
 
     constructor() {
       this.initModel()
-      this.initEditor()
-      this.initUI()
-      this.scrollBottom()
+
+      AppController.initEditor()
+      AppController.initUI()
+      AppController.scrollBottom()
+
       this.setFocusOnChat()
     }
 
@@ -19,35 +21,35 @@ namespace BT.Controllers {
      * Public
      **************************************************************************/
 
-    public getMessageActor(message) {
+    public getMessageActor(message): string {
       return this.model.actors[message[0]]
     }
 
-    public getMessageIcon(message) {
+    public getMessageIcon(message): string {
       if (message[0] === 0) { return "date_range" }
       if (message[0] === 1) { return "person" }
 
       return "adb"
     }
 
-    public getMessageText(message) {
+    public getMessageText(message): string {
       return message[1]
     }
 
-    public onInputTextKeyDown(event) {
+    public onInputTextKeyDown(event): void {
       if (event.which !== 13) { return; }
 
-      var s = this.model.inputText
+      let s: string = this.model.inputText
       if (s == null || s.trim().length === 0) { return; }
 
       this.model.messages.push([1, s])
 
       this.model.inputText = null
 
-      this.scrollBottom()
+      AppController.scrollBottom()
     }
 
-    public setFocusOnChat() {
+    public setFocusOnChat(): void {
       setTimeout(function() {
         document.getElementById("inputText").focus()
       }, 100)
@@ -58,8 +60,8 @@ namespace BT.Controllers {
      * Private
      **************************************************************************/
 
-    private initEditor() {
-      var editor = ace.edit("editor")
+    private static initEditor(): void {
+      let editor: AceAjax.Editor = ace.edit("editor")
 
       editor.$blockScrolling = Infinity
       editor.setTheme("ace/theme/monokai")
@@ -69,7 +71,7 @@ namespace BT.Controllers {
       editor.gotoLine(0)
     }
 
-    private initModel() {
+    private initModel(): void {
       this.model = {
         actors: ["Карл", "Дима", "MyBot"],
         inputText: null,
@@ -91,19 +93,20 @@ namespace BT.Controllers {
       }
     }
 
-    private initUI() {
-      window.onresize = this.scrollBottom
+    private static initUI(): void {
+      window.onresize = AppController.scrollBottom
     }
 
-    private scrollBottom = function() {
-      var o = document.getElementById("chatContainer")
-      var h = o.style.height
+    private static scrollBottom(): void {
+      let o: HTMLScriptElement = <HTMLScriptElement>document.getElementById("chatContainer")
+      let h: string = o.style.height
 
       setTimeout(function() {
         setTimeout(function() {
           o.style.height = h
-          var d = o.children[0]
-          d.scrollTop = d.scrollHeight //- d.offsetHeight
+
+          let d: HTMLScriptElement = <HTMLScriptElement>o.children[0]
+          d.scrollTop = d.scrollHeight - d.offsetHeight
         }, 100)
       }, 100)
     }
