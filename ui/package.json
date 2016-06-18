@@ -4,22 +4,26 @@
   },
   "contributors": [
     { "name": "dieremieiev" },
-    { "name": "tvvlab" }
+    { "name": "tvvlab"      }
   ],
   "description": "Wordbook",
   "devDependencies": {
-    "lite-server": "2.2.0"
+    "bower"            : "1.7.9",
+    "lite-server"      : "2.2.0",
+    "npm-check-updates": "2.6.7"
   },
-  "homepage": "https://github.com/dieremieiev/bt",
-  "name": "bt",
-  "license": "GPL-3.0",
-  "main": "app/boot.js",
+  "homepage"  : "https://github.com/dieremieiev/bt",
+  "name"      : "bt",
+  "license"   : "GPL-3.0",
+  "main"      : "app/boot.js",
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dieremieiev/bt.git"
+    "type" : "git",
+    "url"  : "git+https://github.com/dieremieiev/bt.git"
   },
   "scripts": {
-    "lite": "lite-server",
+    "bower": "bower",
+    "lite" : "lite-server",
+    "ncu"  : "ncu",
     "start": "npm run lite"
   },
   "version": "0.0.1"

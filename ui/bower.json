@@ -4,26 +4,24 @@
     "tvvlab"
   ],
   "dependencies": {
-    "ace-builds": "1.2.3",
-    "angular": "1.5.7",
-    "angular-animate": "1.5.7",
-    "angular-aria": "1.5.7",
-    "angular-messages": "1.5.7",
-    "angular-material": "1.1.0-rc4",
+    "ace-builds"            : "1.2.3",
+    "angular"               : "1.5.7",
+    "angular-animate"       : "1.5.7",
+    "angular-aria"          : "1.5.7",
+    "angular-messages"      : "1.5.7",
+    "angular-material"      : "1.1.0-rc4",
     "angular-material-icons": "0.7.0",
-    "lzjs": "1.3.0"
+    "lzjs"                  : "1.3.0"
   },
   "description": "BT",
-  "homepage": "https://github.com/dieremieiev/bt",
+  "homepage"   : "https://github.com/dieremieiev/bt",
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "bower_components"
   ],
   "license": "GPL-3.0",
-  "main": "app/boot.js",
-  "name": "bt",
+  "main"   : "app/boot.js",
+  "name"   : "bt",
   "private": true
 }
