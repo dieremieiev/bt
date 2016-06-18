@@ -21,7 +21,7 @@
     "bower_components"
   ],
   "license": "GPL-3.0",
-  "main"   : "app/boot.js",
+  "main"   : "js/main.js",
   "name"   : "bt",
   "private": true
 }
