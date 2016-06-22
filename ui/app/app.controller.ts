@@ -1,4 +1,6 @@
 namespace BT {
+  const MODEL_STORAGE_KEY = 'BTMODEL'
+
   export class AppController {
     /***************************************************************************
      * Main
@@ -6,14 +8,11 @@ namespace BT {
 
     model: AppModel
 
+    private editor: AceAjax.Editor
+
     constructor() {
-      this.initModel()
-
-      AppController.initEditor()
-      AppController.initUI()
-      AppController.scrollBottom()
-
-      this.setFocusOnChat()
+      this.initUI()
+      this.loadModel()
     }
 
 
@@ -44,8 +43,9 @@ namespace BT {
       if (s == null || s.trim().length === 0) { return; }
 
       this.model.messages.push({actorId: 1, text: s})
-
       this.model.inputText = null
+
+      this.saveModel()
 
       AppController.scrollBottom()
     }
@@ -62,60 +62,105 @@ namespace BT {
      **************************************************************************/
 
     private getActor(actorId: number): Actor {
-      if (this.model.actors == null) { return null }
+      if (this.model.actors === null) { return null }
 
-      let fa = this.model.actors.filter(actor => actor.actorId == actorId)
-      if (typeof fa === "undefined" || fa.length == 0) { return null }
+      let fa = this.model.actors.filter(actor => actor.actorId === actorId)
+      if (typeof fa === "undefined" || fa.length === 0) { return null }
 
       return fa[0]
     }
 
-    private static initEditor(): void {
-      let editor: AceAjax.Editor = ace.edit("editor")
-
-      editor.$blockScrolling = Infinity
-      editor.setTheme("ace/theme/monokai")
-      editor.getSession().setMode("ace/mode/javascript")
-
-      editor.setValue("function test() { return 1 + 1 }")
-      editor.gotoLine(0)
-    }
-
-    private initModel(): void {
-      this.model = {
+    private static getInitialModel(): AppModel {
+      return {
         actors: [
           {actorId: 0, name: "Карл" , icon: "date_range"},
           {actorId: 1, name: "Дима" , icon: "person"},
           {actorId: 2, name: "MyBot", icon: "adb"}
         ],
+        editor   : "",
         inputText: null,
-        messages: [
-          {actorId: 0, text: "Это текст, который написал бот-учитель"},
-          {actorId: 1, text: "Это текст, который написал человек-студент"},
-          {actorId: 2, text: "Старт"},
-          {actorId: 2, text: "Привет, босс!"},
-          {actorId: 2, text: "Стоп"},
-          {actorId: 0, text: "Отлично! Урок выполнен. Переходим к следующему уроку? И вообще это тест длинного текста, который написал бот-учитель."},
-          {actorId: 0, text: "Или не переходим к следующему уроку?"},
-          {actorId: 0, text: "Предлагаю таки продолжить!"},
-          {actorId: 0, text: "Бесполезное сообщение для теста скроллинга 1"},
-          {actorId: 0, text: "Бесполезное сообщение для теста скроллинга 2"},
-          {actorId: 0, text: "Бесполезное сообщение для теста скроллинга 3"},
-          {actorId: 0, text: "Бесполезное сообщение для теста скроллинга 4"},
-          {actorId: 0, text: "Бесполезное сообщение для теста скроллинга X"}
-        ]
+        messages : [],
+        version  : "0.0.1"
       }
     }
 
-    private static initUI(): void {
+    private initEditor(): void {
+      let editor = ace.edit("editor")
+
+      editor.$blockScrolling = Infinity
+      editor.setTheme("ace/theme/monokai")
+      editor.getSession().setMode("ace/mode/javascript")
+
+      this.editor = editor
+    }
+
+    private initUI(): void {
       window.onresize = AppController.scrollBottom
+
+      this.initEditor()
+      this.setFocusOnChat()
+
+      AppController.scrollBottom()
+    }
+
+    private static isModelValid(model: AppModel): boolean {
+      if (model === null
+       || typeof model !== "object"
+       || typeof model.actors    !== "object"
+       || typeof model.editor    !== "string"
+       || typeof model.inputText === "undefined"
+       || typeof model.messages  !== "object"
+       || typeof model.version   !== "string") { return false }
+
+      if (!(model.actors instanceof Array) || model.actors.length < 3
+       || !(model.messages instanceof Array)
+       || model.version.length === 0) { return false }
+
+      return true
+    }
+
+    private loadModel(): void {
+      let s = localStorage.getItem(MODEL_STORAGE_KEY)
+      let m = null
+
+      if (s !== null) {
+        try {
+          m = JSON.parse(s)
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
+      this.model = AppController.isModelValid(m)
+                 ? m : AppController.getInitialModel()
+
+      if (this.editor) {
+        this.editor.setValue(this.model.editor)
+        this.editor.gotoLine(0)
+      }
+    }
+
+    private saveModel(): void {
+      let s = null
+
+      this.model.editor = this.editor.getValue()
+
+      try {
+        s = JSON.stringify(this.model)
+      } catch (e) {
+        console.log(e)
+      }
+
+      if (s !== null) {
+        localStorage.setItem(MODEL_STORAGE_KEY, s)
+      }
     }
 
     private static scrollBottom(): void {
       let o = document.getElementById("chatContainer")
       let h = o.style.height
 
-      setTimeout(function() {
+      setTimeout(function() {   // note: two nested calls required
         setTimeout(function() {
           o.style.height = h
 

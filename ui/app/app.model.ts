@@ -1,17 +1,19 @@
 namespace BT {
-  export class AppModel {
-    actors   : Array<Actor>
+  export interface AppModel {
+    actors   : Actor[]
+    editor   : string
     inputText: string
-    messages : Array<ChatMessage>
+    messages : ChatMessage[]
+    version  : string
   }
 
-  export class Actor {
+  export interface Actor {
     actorId: number
     name   : string
     icon   : string
   }
 
-  export class ChatMessage {
+  export interface ChatMessage {
     actorId: number
     text   : string
   }

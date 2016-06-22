@@ -8,6 +8,7 @@
   },
   "exclude": [
     "bower_components",
-    "node_modules"
+    "node_modules",
+    "app/botrunner.ts"
   ]
 }
