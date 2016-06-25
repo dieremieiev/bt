@@ -17,11 +17,13 @@ namespace BT {
      **************************************************************************/
 
     inputText: string = null
-    messages : FormattedChatMessage[]
+    messages : IFormattedMessage[]
     version  : string
 
     private mc: ModelController
     private ec: EditorController
+
+    private course: Course.ICourse
 
 
     /***************************************************************************
@@ -34,6 +36,7 @@ namespace BT {
 
       this.messages = this.mc.getFormattedMessages()
       this.version  = this.mc.getVersion()
+      this.course   = Course.getCourse(this.mc.getState())
 
       this.initUI()
 
@@ -53,7 +56,10 @@ namespace BT {
       if (event.which !== 13) { return; }
 
       let s: string = this.inputText
-      if (s == null || s.trim().length === 0) { return; }
+      if (s == null) { return }
+
+      s = s.trim()
+      if (s.length === 0) { return }
 
       this.mc.addMessage({ actorId: 1, text: s })
 
@@ -62,17 +68,25 @@ namespace BT {
 
       this.mc.saveModel()
 
+      this.handleCourse("chat", s)
+
       AppController.scrollBottom()
     }
 
     onTimer(): void {
+      var t = new Date().getTime()
+
+      this.handleCourse("timer", String(t))
+
       if (this.mc.isDirty() === false) { return }
 
       let i = this.mc.getEditorChanged()
       if (i === 0) { return }
 
-      if (new Date().getTime() - i > SAVE_AFTER_CHANGES) {
+      if (t - i > SAVE_AFTER_CHANGES) {
         this.mc.saveModel()
+
+        this.handleCourse("editor", String(this.mc.getEditorChanged()))
       }
     }
 
@@ -86,6 +100,38 @@ namespace BT {
     /***************************************************************************
      * Private
      **************************************************************************/
+
+    private handleCourse(sender: Course.SenderType, text: string) {
+      let state = this.mc.getState()
+
+      let m = this.course.handle({
+        sender: sender,
+        text  : text,
+        code  : this.mc.getEditor(),
+        state : state
+      })
+
+      if (m === null) { return }
+
+      let save = false
+
+      if (!state || (state.course !== m.state.course)
+                 || (state.lesson !== m.state.lesson)
+                 || (state.step   !== m.state.step)) {
+        this.mc.setState(m.state)
+        save = true
+      }
+
+      if (m.text) {
+        this.mc.addMessage({ actorId: 0, text: m.text })
+
+        // TODO - scope apply?
+
+        save = true
+      }
+
+      if (save) { this.mc.saveModel() }
+    }
 
     private initUI(): void {
       window.onresize = AppController.scrollBottom

@@ -10,12 +10,24 @@ namespace BT {
    * Interface Model
    ****************************************************************************/
 
-  export interface AppModel {
-    actors       : Actor[]
+  export interface IModel {
+    actors       : IActor[]
     editor       : string
     editorChanged: number
-    messages     : ChatMessage[]
+    messages     : IMessage[]
+    state?       : Course.IState
     version      : string
+  }
+
+
+  /*****************************************************************************
+   * Interface FormattedChatMessage
+   ****************************************************************************/
+
+  export interface IFormattedMessage {
+    icon: string
+    name: string
+    text: string
   }
 
 
@@ -23,7 +35,7 @@ namespace BT {
    * Interface Actor
    ****************************************************************************/
 
-  export interface Actor {
+  interface IActor {
     actorId: number
     name   : string
     icon   : string
@@ -34,20 +46,9 @@ namespace BT {
    * Interface ChatMessage
    ****************************************************************************/
 
-  export interface ChatMessage {
+  interface IMessage {
     actorId: number
     text   : string
-  }
-
-
-  /*****************************************************************************
-   * Interface FormattedChatMessage
-   ****************************************************************************/
-
-  export interface FormattedChatMessage {
-    icon: string
-    name: string
-    text: string
   }
 
 
@@ -60,7 +61,7 @@ namespace BT {
      * State
      **************************************************************************/
 
-    private model: AppModel
+    private model: IModel
 
     private dirty: boolean = false
 
@@ -88,7 +89,7 @@ namespace BT {
      * Public
      **************************************************************************/
 
-    addMessage(message: ChatMessage) {
+    addMessage(message: IMessage) {
       this.model.messages.push(message)
     }
 
@@ -100,7 +101,7 @@ namespace BT {
       return this.model.editorChanged
     }
 
-    getFormattedMessages(): FormattedChatMessage[] {
+    getFormattedMessages(): IFormattedMessage[] {
       let messages  = this.model.messages
       let count     = messages.length
       let formatted = new Array(count)
@@ -118,6 +119,10 @@ namespace BT {
       }
 
       return formatted
+    }
+
+    getState(): Course.IState {
+      return this.model.state
     }
 
     getVersion(): string {
@@ -170,7 +175,7 @@ namespace BT {
      * Pivate
      **************************************************************************/
 
-    private getActor(message: ChatMessage): Actor {
+    private getActor(message: IMessage): IActor {
       let id = message.actorId
 
       let fa = this.model.actors.filter(actor => actor.actorId === id)
@@ -179,7 +184,7 @@ namespace BT {
       return fa[0]
     }
 
-    private static isModelValid(model: AppModel): boolean {
+    private static isModelValid(model: IModel): boolean {
       if (model === null
        || typeof model               !== "object"
        || typeof model.actors        !== "object"

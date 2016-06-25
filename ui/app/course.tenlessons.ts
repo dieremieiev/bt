@@ -1,13 +1,13 @@
 
 namespace BT.Course {
   export interface ICourse {
-    handle: (message: Message) => Message
+    handle: (message: IMessage) => IMessage
   }
 
   let course: ICourse;
 
-  export function getCourse(state?: State): ICourse {
-    return course ? new CourseRunner({
+  export function getCourse(state?: IState): ICourse {
+    return course ? course : new CourseRunner({
       name: "Ознакомительный",
       description: "Курс чтобы освоить интерфейс и hello word",
       help: "some help",
@@ -22,7 +22,7 @@ namespace BT.Course {
               description: "Попробуйте написать что нибуть в чате",
               help: "Чат находится справа - чат это просто чат",
               patterns: [],
-              execute: (message: Message, guess: string[]) => {
+              execute: (message: IMessage, guess: string[]) => {
                 switch (message.sender) {
                   case "chat":
                     return {
@@ -48,7 +48,7 @@ namespace BT.Course {
               description: "Как начать урок сначала",
               help: "Чтобы начать урок сначала - нужно просто написать 'вернуться в начало!' или '/reset' (восклицательный знак обязателен :). Впрочем мы поробуем распознать и другие формулировки но не гарантируем",
               patterns: [{ patterns: [".* начало!", "/reset"], guess: "Вернуться в начало", type: "command" }],
-              execute: (message: Message, guess: string[]) => {
+              execute: (message: IMessage, guess: string[]) => {
                 switch (message.sender) {
                   case "chat":
                     if (guess.length == 1 && guess[0] === "Вернуться в начало") {
@@ -71,10 +71,10 @@ namespace BT.Course {
         }
       ]
     },
-      state ? {
+      state ? state : {
         course: "Ознакомительный",
         lesson: "Начало",
         step: "Чат"
-      } : state) : course
+      })
   }
 }
