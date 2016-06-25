@@ -64,13 +64,10 @@ namespace BT {
       s = s.trim()
       if (s.length === 0) { return }
 
-      this.addMessage(1, s)
-
-      this.messages  = this.mc.getFormattedMessages()
       this.inputText = null
 
+      this.addMessage(1, s)
       this.mc.saveModel()
-
       this.handleCourse("chat", s)
 
       AppController.scrollBottom()
@@ -107,7 +104,7 @@ namespace BT {
     private addMessage(actorId: number, text: string): void {
       this.mc.addMessage({ actorId: actorId, text: text })
 
-      this.messages  = this.mc.getFormattedMessages()
+      this.messages = this.mc.getFormattedMessages()
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
