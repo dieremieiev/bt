@@ -36,7 +36,10 @@ namespace BT {
 
       this.messages = this.mc.getFormattedMessages()
       this.version  = this.mc.getVersion()
-      this.course   = Course.getCourse(this.mc.getState())
+
+      let state
+      [this.course, state] = Course.getCourse(this.mc.getState())
+      this.mc.setState(state)
 
       this.initUI()
 
@@ -61,7 +64,7 @@ namespace BT {
       s = s.trim()
       if (s.length === 0) { return }
 
-      this.mc.addMessage({ actorId: 1, text: s })
+      this.addMessage(1, s)
 
       this.messages  = this.mc.getFormattedMessages()
       this.inputText = null
@@ -101,6 +104,12 @@ namespace BT {
      * Private
      **************************************************************************/
 
+    private addMessage(actorId: number, text: string): void {
+      this.mc.addMessage({ actorId: actorId, text: text })
+
+      this.messages  = this.mc.getFormattedMessages()
+    }
+
     private handleCourse(sender: Course.SenderType, text: string) {
       let state = this.mc.getState()
 
@@ -111,22 +120,21 @@ namespace BT {
         state : state
       })
 
-      if (m === null) { return }
+      if (!m) { return }
 
       let save = false
 
-      if (!state || (state.course !== m.state.course)
-                 || (state.lesson !== m.state.lesson)
-                 || (state.step   !== m.state.step)) {
-        this.mc.setState(m.state)
-        save = true
+      if (m.state) {
+        if (!state || (state.course !== m.state.course)
+                   || (state.lesson !== m.state.lesson)
+                   || (state.step   !== m.state.step)) {
+          this.mc.setState(m.state)
+          save = true
+        }
       }
 
       if (m.text) {
-        this.mc.addMessage({ actorId: 0, text: m.text })
-
-        // TODO - scope apply?
-
+        this.addMessage(0, m.text)
         save = true
       }
 

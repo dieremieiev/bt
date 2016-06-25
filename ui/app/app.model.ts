@@ -71,6 +71,8 @@ namespace BT {
      **************************************************************************/
 
     constructor() {
+      // TODO: use Typescript TYPE for actors
+
       this.model = {
         actors: [
           {actorId: 0, name: "Бот-учитель" , icon: "date_range"},
@@ -153,6 +155,10 @@ namespace BT {
       this.model.editor = editor
       this.model.editorChanged = new Date().getTime()
       this.dirty = true
+    }
+
+    setState(state: Course.IState): void {
+      this.model.state = state
     }
 
     saveModel(): void {
