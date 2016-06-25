@@ -6,8 +6,8 @@ namespace BT.Course {
 
   let course: ICourse;
 
-  export function getCourse(state?: IState): ICourse {
-    return course ? course : new CourseRunner({
+  export function getCourse(state?: IState): [ICourse, IState] {
+    return [course ? course : new CourseRunner({
       name: "Ознакомительный",
       description: "Курс чтобы освоить интерфейс и hello word",
       help: "some help",
@@ -70,11 +70,10 @@ namespace BT.Course {
           ]
         }
       ]
-    },
-      state ? state : {
-        course: "Ознакомительный",
-        lesson: "Начало",
-        step: "Чат"
-      })
+    }), state ? state : {
+      course: "Ознакомительный",
+      lesson: "Начало",
+      step: "Чат"
+    }]
   }
 }

@@ -47,17 +47,15 @@ namespace BT.Course {
   const STATE_NAME = 'course_state'
 
   export class CourseRunner {
-    private state: IState
     private steps: IStepsMap
     private worker: Worker = new Worker("js/botrunner")
 
-    constructor(course: ICourseModel, state: IState) {
-      this.state = state;
+    constructor(course: ICourseModel) {
       this.steps = this.createStepsMapping(course);
     }
 
     public handle(message: IMessage): IMessage {
-      let step = this.getStep(this.state)
+      let step = this.getStep(message.state)
       let result = message
       if (step.execute) {
         //TODO: recognise, test and THEN execute
@@ -74,10 +72,6 @@ namespace BT.Course {
         // }
         let variants: string[] = this.recognise(message, step.patterns)
         result = step.execute(message, variants)
-        this.state = result.state
-      }
-      if (!result.state) {
-        result.state = this.state
       }
       return result
     }
