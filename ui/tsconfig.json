@@ -9,5 +9,9 @@
   "exclude": [
     "bower_components",
     "node_modules"
-  ]
+  ],
+  "formatCodeOptions": {
+    "indentSize": 2,
+    "tabSize": 2
+  }
 }
