@@ -18,6 +18,23 @@ namespace BT.Course {
           help: "Немного помощи не помешает...",
           steps: [
             {
+              name: "Начало",
+              description: "Приглашение",
+              help: "",
+              patterns: [],
+              execute: (message: IMessage, guess: string[]) => {
+                return {
+                  sender: "course",
+                  text: "Ознакомительный курс чтобы освоить интерфейс и hello word",
+                  state: {
+                    course: "Ознакомительный",
+                    lesson: "Начало",
+                    step: "Чат"
+                  }
+                }
+              }
+            },
+            {
               name: "Чат",
               description: "Попробуйте написать что нибуть в чате",
               help: "Чат находится справа - чат это просто чат",
