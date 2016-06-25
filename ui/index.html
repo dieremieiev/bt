@@ -18,7 +18,7 @@
     <md-toolbar layout="row" layout-align="none center">
       <div class="logo">BT</div>
       <div flex></div>
-      <div class="version">v0.0.1</div>
+      <div class="version">v{{ac.version}}</div>
     </md-toolbar>
 
     <div layout="row" class="h100p">
@@ -26,11 +26,11 @@
 
       <div flex layout="column" ng-click="ac.setFocusOnChat()">
         <md-virtual-repeat-container id="chatContainer" md-auto-shrink="true" flex>
-          <md-list-item class="md-2-line" md-virtual-repeat="m in ac.model.messages">
-            <ng-md-icon icon="{{ac.getMessageIcon(m)}}" size="32"></ng-md-icon>
+          <md-list-item class="md-2-line" md-virtual-repeat="m in ac.messages">
+            <ng-md-icon icon="{{m.icon}}" size="32"></ng-md-icon>
             <div class="md-list-item-text" layout="column">
-              <h4>{{ac.getMessageActor(m)}}</h4>
-              <p>{{ac.getMessageText(m)}}</p>
+              <h4>{{m.name}}</h4>
+              <p>{{m.text}}</p>
             </div>
           </md-list-item>
         </md-virtual-repeat-container>
@@ -41,7 +41,7 @@
           </div>
           <form flex>
             <md-input-container class="md-block">
-              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="ac.model.inputText" ng-keydown="ac.onInputTextKeyDown($event)">
+              <input id="inputText" type="text" md-maxlength="4000" aria-label="inputText" ng-model="ac.inputText" ng-keydown="ac.onInputTextKeyDown($event)">
             </md-input-container>
           </form>
         </div>
@@ -56,10 +56,9 @@
   <script src="bower_components/angular-material/angular-material.js"></script>
   <script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
   <script src="bower_components/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-  <script src="bower_components/lzjs/lzjs.min.js"></script>
+  <script src="js/app.model.js"></script>
+  <script src="js/app.editor.js"></script>
   <script src="js/app.controller.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/app.course.js"></script>
-  <script src="js/app.tenlessons.js"></script>
 </body>
 </html>
