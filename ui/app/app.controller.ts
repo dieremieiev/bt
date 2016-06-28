@@ -34,18 +34,14 @@ namespace BT {
       this.mc = new ModelController
       this.mc.loadModel()
 
-      this.messages = this.mc.getFormattedMessages()
-      this.version  = this.mc.getVersion()
-
       let state
       [this.course, state] = Course.getCourse(this.mc.getState())
       this.mc.setState(state)
 
-      this.handleCourse("system", "init")
-
-      this.initUI()
-
       this.ec = new EditorController(this, "editor", this.mc.getEditor())
+
+      this.handleCourse("system", "init")
+      this.initUI()
     }
 
 
@@ -61,18 +57,22 @@ namespace BT {
       if (event.which !== 13) { return; }
 
       let s: string = this.inputText
-      if (s == null) { return }
+      if (!s) { return }
 
       s = s.trim()
       if (s.length === 0) { return }
 
       this.inputText = null
 
-      this.addMessage(1, s)
-      this.mc.saveModel()
-      this.handleCourse("chat", s)
+      this.addMessage(Actor.Person, s)
 
-      AppController.scrollBottom()
+      if (this.handleSystemCommand(s) === false) {
+        this.handleCourse("chat", s)
+      }
+
+      this.mc.saveModel()
+
+      AppController.scrollChat()
     }
 
     onTimer(): void {
@@ -105,8 +105,7 @@ namespace BT {
 
     private addMessage(actorId: number, text: string): void {
       this.mc.addMessage({ actorId: actorId, text: text })
-
-      this.messages = this.mc.getFormattedMessages()
+      this.updateUI()
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
@@ -121,37 +120,69 @@ namespace BT {
 
       if (!m) { return }
 
-      let save = false
+      let b = false
 
       if (m.state) {
         if (!state || (state.course !== m.state.course)
                    || (state.lesson !== m.state.lesson)
                    || (state.step   !== m.state.step)) {
           this.mc.setState(m.state)
-          save = true
+          b = true
         }
       }
 
       if (m.text) {
-        this.addMessage(0, m.text)
-        save = true
+        let sender = m.sender === "bot" ? Actor.Bot : Actor.Teacher
+        this.addMessage(sender, m.text)
+        b = true
       }
 
-      if (save) { this.mc.saveModel() }
+      if (m.code) {
+        this.ec.setValue(m.code)
+        b = true
+      }
+
+      if (b) { this.mc.saveModel() }
+    }
+
+    private handleSystemCommand(s: string): boolean {
+      let b = false
+
+      if (s === "/clear") {
+        this.mc.clearMessages()
+        this.updateUI()
+        b = true
+      }
+
+      if (s === "/help") {
+        this.addMessage(Actor.Teacher, "/clear /help /reset")
+        b = true
+      }
+
+      if (s === "/reset") {
+        this.mc.resetModel()
+        this.ec.setValue(this.mc.getEditor())
+        this.updateUI()
+        b = true
+      }
+
+      return b
     }
 
     private initUI(): void {
-      window.onresize = AppController.scrollBottom
+      window.onresize = AppController.scrollChat
 
       this.setFocusOnChat()
 
-      AppController.scrollBottom()
+      AppController.scrollChat()
 
       let self = this
       setInterval(function() { self.onTimer() }, TIMER_EVENT_INTERVAL)
+
+      this.updateUI()
     }
 
-    private static scrollBottom(): void {
+    private static scrollChat(): void {
       let o = document.getElementById("chatContainer")
       let h = o.style.height
 
@@ -163,6 +194,11 @@ namespace BT {
           d.scrollTop = d.scrollHeight - d.offsetHeight
         }, 100)
       }, 100)
+    }
+
+    private updateUI(): void {
+      this.messages = this.mc.getFormattedMessages()
+      this.version  = this.mc.getVersion()
     }
   }
 }

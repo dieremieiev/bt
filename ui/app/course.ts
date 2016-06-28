@@ -1,4 +1,5 @@
 namespace BT.Course {
+  // TODO: use enum
   export type MessageType = "answer" | "command" | "question"
   export type SenderType = "bot" | "chat" | "course" | "editor" | "system" | "timer"
 
