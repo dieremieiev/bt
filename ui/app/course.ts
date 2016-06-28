@@ -1,6 +1,6 @@
 namespace BT.Course {
-  export type MessageType = "question" | "command" | "answer"
-  export type SenderType = "chat" | "timer" | "editor" | "bot" | "course"
+  export type MessageType = "answer" | "command" | "question"
+  export type SenderType = "bot" | "chat" | "course" | "editor" | "system" | "timer"
 
   export interface IMessage {
     sender: SenderType

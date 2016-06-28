@@ -9,7 +9,7 @@ namespace BT.Course {
   export function getCourse(state?: IState): [ICourse, IState] {
     return [course ? course : new CourseRunner({
       name: "Ознакомительный",
-      description: "Курс чтобы освоить интерфейс и hello word",
+      description: "Курс чтобы освоить интерфейс и hello world",
       help: "some help",
       lessons: [
         {
@@ -25,7 +25,7 @@ namespace BT.Course {
               execute: (message: IMessage, guess: string[]) => {
                 return {
                   sender: "course",
-                  text: "Ознакомительный курс чтобы освоить интерфейс и hello word",
+                  text: "Ознакомительный курс чтобы освоить интерфейс и hello world",
                   state: {
                     course: "Ознакомительный",
                     lesson: "Начало",
@@ -44,7 +44,7 @@ namespace BT.Course {
                   case "chat":
                     return {
                       sender: "course",
-                      text: "все в порядке: двигаемся дальше",
+                      text: "Все в порядке: двигаемся дальше",
                       state: {
                         course: "Ознакомительный",
                         lesson: "Начало",
@@ -54,7 +54,7 @@ namespace BT.Course {
                   case "editor":
                     return {
                       sender: "course",
-                      text: "попробуйте набрать какой то текст",
+                      text: "Попробуйте набрать какой-то текст",
                       state: message.state
                     }
                 }
@@ -63,7 +63,7 @@ namespace BT.Course {
             {
               name: "Вернуться в начало",
               description: "Как начать урок сначала",
-              help: "Чтобы начать урок сначала - нужно просто написать 'вернуться в начало!' или '/reset' (восклицательный знак обязателен :). Впрочем мы поробуем распознать и другие формулировки но не гарантируем",
+              help: "Чтобы начать урок сначала - нужно просто написать 'вернуться в начало!' или '/reset' (восклицательный знак обязателен :). Впрочем мы попробуем распознать и другие формулировки, но не гарантируем",
               patterns: [{ patterns: [".* начало!", "/reset"], guess: "Вернуться в начало", type: "command" }],
               execute: (message: IMessage, guess: string[]) => {
                 switch (message.sender) {
@@ -77,7 +77,7 @@ namespace BT.Course {
                     } else {
                       return {
                         sender: "course",
-                        text: "Что то не понятно - попробуйте еще раз!",
+                        text: "Что-то непонятно - попробуйте еще раз!",
                         state: message.state
                       }
                     }
@@ -90,7 +90,7 @@ namespace BT.Course {
     }), state ? state : {
       course: "Ознакомительный",
       lesson: "Начало",
-      step: "Чат"
+      step: "Начало"
     }]
   }
 }

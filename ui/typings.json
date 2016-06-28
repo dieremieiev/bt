@@ -1,8 +1,8 @@
 {
   "name": "bt",
   "globalDependencies": {
-    "ace": "registry:dt/ace#0.0.0+20160317120654",
-    "angular": "registry:dt/angular#1.5.0+20160619025852",
-    "jquery": "registry:dt/jquery#1.10.0+20160620094458"
+    "ace": "registry:dt/ace#0.0.0+20160627010733",
+    "angular": "registry:dt/angular#1.5.0+20160627105203",
+    "jquery": "registry:dt/jquery#1.10.0+20160628074423"
   }
 }
