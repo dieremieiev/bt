@@ -64,7 +64,7 @@ namespace BT.Course {
               name: "Вернуться в начало",
               description: "Как начать урок сначала",
               help: "Чтобы начать урок сначала - нужно просто написать 'вернуться в начало!' или '/reset' (восклицательный знак обязателен :). Впрочем мы попробуем распознать и другие формулировки, но не гарантируем",
-              patterns: [{ patterns: [".* начало!", "/reset"], guess: "Вернуться в начало", type: "command" }],
+              patterns: [{ patterns: [".* начало!"], guess: "Вернуться в начало", type: "command" }],
               execute: (message: IMessage, guess: string[]) => {
                 switch (message.sender) {
                   case "chat":

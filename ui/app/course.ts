@@ -7,6 +7,7 @@ namespace BT.Course {
     text: string
     code?: string
     state?: IState
+    next?: IMessage
   }
 
   export interface IPattern {
