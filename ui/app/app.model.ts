@@ -7,6 +7,13 @@ namespace BT {
 
 
   /*****************************************************************************
+   * Enums
+   ****************************************************************************/
+
+  export enum Actor { Teacher, Person, Bot }
+
+
+  /*****************************************************************************
    * Interface Model
    ****************************************************************************/
 
@@ -71,19 +78,7 @@ namespace BT {
      **************************************************************************/
 
     constructor() {
-      // TODO: use Typescript TYPE for actors
-
-      this.model = {
-        actors: [
-          {actorId: 0, name: "Бот-учитель" , icon: "date_range"},
-          {actorId: 1, name: "Пользователь", icon: "person"},
-          {actorId: 2, name: "MyBot"       , icon: "adb"}
-        ],
-        editor       : "",
-        editorChanged: 0,
-        messages     : [],
-        version      : "0.0.1"
-      }
+      this.resetModel()
     }
 
 
@@ -91,8 +86,12 @@ namespace BT {
      * Public
      **************************************************************************/
 
-    addMessage(message: IMessage) {
+    addMessage(message: IMessage): void {
       this.model.messages.push(message)
+    }
+
+    clearMessages(): void {
+      this.model.messages = []
     }
 
     getEditor(): string {
@@ -111,6 +110,7 @@ namespace BT {
       for (let i = 0; i < count; i++) {
         let message = messages[i]
         let actor   = this.getActor(message)
+
         if (actor === null) { continue }
 
         formatted[i] = {
@@ -131,8 +131,7 @@ namespace BT {
       return this.model.version
     }
 
-    isDirty(): boolean
-    {
+    isDirty(): boolean {
       return this.dirty
     }
 
@@ -149,6 +148,20 @@ namespace BT {
       }
 
       if (ModelController.isModelValid(m)) { this.model = m }
+    }
+
+    resetModel(): void {
+      this.model = {
+        actors: [
+          {actorId: Actor.Teacher, name: "Бот-учитель" , icon: "date_range"},
+          {actorId: Actor.Person , name: "Пользователь", icon: "person"},
+          {actorId: Actor.Bot    , name: "MyBot"       , icon: "adb"}
+        ],
+        editor       : "",
+        editorChanged: 0,
+        messages     : [],
+        version      : "0.0.1"
+      }
     }
 
     setEditor(editor: string): void {
