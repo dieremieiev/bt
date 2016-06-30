@@ -20,6 +20,8 @@ namespace BT {
     messages : IFormattedMessage[]
     version  : string
 
+    private commandPos: number = 0
+
     private mc: ModelController
     private ec: EditorController
 
@@ -34,14 +36,7 @@ namespace BT {
       this.mc = new ModelController
       this.mc.loadModel()
 
-      let state
-      [this.course, state] = Course.getCourse(this.mc.getState())
-      this.mc.setState(state)
-
-      this.ec = new EditorController(this, "editor", this.mc.getEditor())
-
-      this.handleCourse("system", "init")
-      this.initUI()
+      this.initController()
     }
 
 
@@ -53,26 +48,12 @@ namespace BT {
       this.mc.setEditor(this.ec.getValue())
     }
 
-    onInputTextKeyDown(event: KeyboardEvent): void {
-      if (event.which !== 13) { return; }
-
-      let s: string = this.inputText
-      if (!s) { return }
-
-      s = s.trim()
-      if (s.length === 0) { return }
-
-      this.inputText = null
-
-      this.addMessage(Actor.Person, s)
-
-      if (this.handleSystemCommand(s) === false) {
-        this.handleCourse("chat", s)
+    onInputTextKeyUp(event: KeyboardEvent): void {
+      switch (event.which) {
+        case 13: this.onEnter(); return
+        case 38: this.onArrowUp(); return
+        case 40: this.onArrowDown(); return
       }
-
-      this.mc.saveModel()
-
-      AppController.scrollChat()
     }
 
     onTimer(): void {
@@ -109,20 +90,23 @@ namespace BT {
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
-      let state = this.mc.getState()
-
       let m = this.course.handle({
         sender: sender,
         text  : text,
         code  : this.mc.getEditor(),
-        state : state
+        state : this.mc.getState()
       })
 
+      this.handleMessage(m)
+    }
+
+    private handleMessage(m: Course.IMessage) {
       if (!m) { return }
 
       let b = false
 
       if (m.state) {
+        let state = this.mc.getState()
         if (!state || (state.course !== m.state.course)
                    || (state.lesson !== m.state.lesson)
                    || (state.step   !== m.state.step)) {
@@ -143,6 +127,8 @@ namespace BT {
       }
 
       if (b) { this.mc.saveModel() }
+
+      if (m.next) { this.handleMessage(m.next) }
     }
 
     private handleSystemCommand(s: string): boolean {
@@ -151,6 +137,7 @@ namespace BT {
       if (s === "/clear") {
         this.mc.clearMessages()
         this.updateUI()
+        this.setCommandPos()
         b = true
       }
 
@@ -161,12 +148,23 @@ namespace BT {
 
       if (s === "/reset") {
         this.mc.resetModel()
-        this.ec.setValue(this.mc.getEditor())
-        this.updateUI()
+        this.initController()
         b = true
       }
 
       return b
+    }
+
+    private initController(): void {
+      let state
+      [this.course, state] = Course.getCourse(this.mc.getState())
+      this.mc.setState(state)
+
+      this.ec = new EditorController(this, "editor", this.mc.getEditor())
+
+      this.handleCourse("system", "init")
+      this.initUI()
+      this.setCommandPos()
     }
 
     private initUI(): void {
@@ -182,6 +180,50 @@ namespace BT {
       this.updateUI()
     }
 
+    private onArrowDown(): void {
+      let i  = this.commandPos + 1
+      let pm = this.mc.getPersonMessages()
+
+      if (i > pm.length) { i = pm.length }
+
+      this.inputText = i < pm.length ? pm[i].text : null
+
+      this.commandPos = i
+    }
+
+    private onArrowUp(): void {
+      let i = this.commandPos - 1
+      if (i < 0) { return }
+
+      let pm = this.mc.getPersonMessages()
+      if (pm.length <= i) { i = pm.length - 1 }
+
+      if (i >= 0) { this.inputText = pm[i].text }
+
+      this.commandPos = i
+    }
+
+    private onEnter(): void {
+      let s: string = this.inputText
+      if (!s) { return }
+
+      s = s.trim()
+      if (s.length === 0) { return }
+
+      this.addMessage(Actor.Person, s)
+
+      this.inputText = null
+      this.setCommandPos()
+
+      if (this.handleSystemCommand(s) === false) {
+        this.handleCourse("chat", s)
+      }
+
+      this.mc.saveModel()
+
+      AppController.scrollChat()
+    }
+
     private static scrollChat(): void {
       let o = document.getElementById("chatContainer")
       let h = o.style.height
@@ -194,6 +236,10 @@ namespace BT {
           d.scrollTop = d.scrollHeight - d.offsetHeight
         }, 100)
       }, 100)
+    }
+
+    private setCommandPos(): void {
+      this.commandPos = this.mc.getPersonMessages().length
     }
 
     private updateUI(): void {

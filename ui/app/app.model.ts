@@ -123,6 +123,10 @@ namespace BT {
       return formatted
     }
 
+    getPersonMessages(): IMessage[] {
+      return this.model.messages.filter(m => m.actorId === Actor.Person)
+    }
+
     getState(): Course.IState {
       return this.model.state
     }

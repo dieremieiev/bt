@@ -2,6 +2,4 @@
 
 2. Show "Source code saved" message
 
-3. If I press [arrow-up] => enter previous command to inputText
-
-4. If last teacher's message is the same as previous => ignore it
+3. If last teacher's message is the same as previous => ignore it

@@ -79,7 +79,10 @@ namespace BT.Course {
         //     })
         // }
         let variants: string[] = this.recognise(message, step.patterns)
+
         result = step.execute(message, variants)
+        if (!result) { return null }
+
         if(!result.state) {
           result.state = message.state
         } else {
