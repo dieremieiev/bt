@@ -27,8 +27,6 @@ namespace BT.Course {
                   sender: "course",
                   text: "Ознакомительный курс чтобы освоить интерфейс и hello world",
                   state: {
-                    course: "Ознакомительный",
-                    lesson: "Начало",
                     step: "Чат"
                   }
                 }
@@ -46,8 +44,6 @@ namespace BT.Course {
                       sender: "course",
                       text: "Все в порядке: двигаемся дальше",
                       state: {
-                        course: "Ознакомительный",
-                        lesson: "Начало",
                         step: "Вернуться в начало"
                       }
                     }
@@ -55,7 +51,6 @@ namespace BT.Course {
                     return {
                       sender: "course",
                       text: "Попробуйте набрать какой-то текст",
-                      state: message.state
                     }
                 }
               }
@@ -72,13 +67,11 @@ namespace BT.Course {
                       return {
                         sender: "course",
                         text: "Отлично! В следующий раз урок начнется с начала",
-                        state: message.state
                       }
                     } else {
                       return {
                         sender: "course",
                         text: "Что-то непонятно - попробуйте еще раз!",
-                        state: message.state
                       }
                     }
                 }

@@ -37,23 +37,29 @@ namespace BT.Course {
   }
 
   export interface IState {
-    course: string
-    lesson: string
-    step: string
+    course?: string
+    lesson?: string
+    step?: string
   }
 
-  export interface IStepsMap {
+  interface IStepsMap {
     [key: string]: IStep
+  }
+
+  interface ILessonsMap {
+    [key: string]: ILesson
   }
 
   const STATE_NAME = 'course_state'
 
   export class CourseRunner {
     private steps: IStepsMap
+    private lessons: ILessonsMap
+    private course: ICourseModel
     private worker: Worker = new Worker("js/botrunner")
 
     constructor(course: ICourseModel) {
-      this.steps = this.createStepsMapping(course);
+      [this.lessons, this.steps] = this.createMapping(course)
     }
 
     public handle(message: IMessage): IMessage {
@@ -74,13 +80,36 @@ namespace BT.Course {
         // }
         let variants: string[] = this.recognise(message, step.patterns)
         result = step.execute(message, variants)
+        if(!result.state) {
+          result.state = message.state
+        } else {
+          let nextText = ''
+          let nextState = message.state
+          if(result.state.lesson) {
+            nextState.lesson = result.state.lesson
+            nextText = this.appendDescription(nextText, this.getLesson(nextState))
+          }
+          if(result.state.step) {
+            nextState.step = result.state.step
+            nextText = this.appendDescription(nextText, this.getStep(nextState))
+          }
+          if(nextText) {
+            result.next = {
+              sender: 'course',
+              text: nextText
+            }
+          }
+        }
       }
       return result
     }
 
+    private appendDescription(text:string, unit:IUnit) {
+      return text + '\n' + unit.description
+    }
+
     private recognise(message: IMessage, patterns: IPattern[]): string[] {
       let result: string[] = []
-
       for (let pattern of patterns) {
         for (let reg of pattern.patterns) {
           if (new RegExp(reg).test(message.text)) {
@@ -89,32 +118,41 @@ namespace BT.Course {
           }
         }
       }
-
       return result
     }
 
-    private createStepsMapping(course: ICourseModel): IStepsMap {
+    private createMapping(course: ICourseModel): [ILessonsMap, IStepsMap] {
       let stepsMap = <IStepsMap>{}
-
+      let lessonsMap = <ILessonsMap>{}
       for (let lesson of course.lessons) {
+        lessonsMap[this.lessonKey({
+          course: course.name,
+          lesson: lesson.name
+        })] = lesson
         for (let step of lesson.steps) {
-          stepsMap[this.key({
+          stepsMap[this.stepKey({
             course: course.name,
             lesson: lesson.name,
             step: step.name
           })] = step
         }
       }
-
-      return stepsMap
+      return [lessonsMap, stepsMap]
     }
 
-    private key(state: IState): string {
+    private stepKey(state: IState): string {
       return state.course + "|" + state.lesson + "|" + state.step
     }
 
-    private getStep(state: IState): IStep {
-      return this.steps[this.key(state)]
+    private lessonKey(state: IState): string {
+      return state.course + "|" + state.lesson
     }
-  }
+
+    private getStep(state: IState): IStep {
+      return this.steps[this.stepKey(state)]
+    }
+
+    private getLesson(state: IState): ILesson {
+      return this.lessons[this.lessonKey(state)]
+    }}
 }
