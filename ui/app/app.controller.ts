@@ -32,7 +32,7 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor() {
+    constructor(private $mdToast) {
       this.mc = new ModelController
       this.mc.loadModel()
 
@@ -64,10 +64,11 @@ namespace BT {
       if (this.mc.isDirty() === false) { return }
 
       let i = this.mc.getEditorChanged()
-      if (i === 0) { return }
 
-      if (t - i > SAVE_AFTER_CHANGES) {
+      if (i !== 0 && t - i > SAVE_AFTER_CHANGES) {
         this.mc.saveModel()
+
+        this.showToast("Source code saved")
 
         this.handleCourse("editor", String(this.mc.getEditorChanged()))
       }
@@ -240,6 +241,16 @@ namespace BT {
 
     private setCommandPos(): void {
       this.commandPos = this.mc.getPersonMessages().length
+    }
+
+    private showToast(s: string): void {
+      this.$mdToast.showSimple(s)
+      // this.$mdToast.show(
+      //   this.$mdToast.simple()
+      //     .textContent(s)
+      //     .position("bottom left")
+      //     .hideDelay(3000)
+      // )
     }
 
     private updateUI(): void {

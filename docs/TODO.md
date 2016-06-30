@@ -2,4 +2,6 @@
 
 2. Show "Source code saved" message
 
-3. If last teacher's message is the same as previous => ignore it
+3. Transtale messages like "Source code saved" to Russian
+
+4. If last teacher's message is the same as previous => ignore it
