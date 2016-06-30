@@ -129,7 +129,7 @@ namespace BT {
 
       if (b) { this.mc.saveModel() }
 
-      if (m.next) { this.handleMessage(m.next) }
+      this.handleMessage(m.next)
     }
 
     private handleSystemCommand(s: string): boolean {
