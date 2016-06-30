@@ -60,55 +60,47 @@ namespace BT.Course {
 
     constructor(course: ICourseModel) {
       [this.lessons, this.steps] = this.createMapping(course)
+      this.course = course
     }
 
     public handle(message: IMessage): IMessage {
       let step = this.getStep(message.state)
-      let result = message
-      if (step.execute) {
-        //TODO: recognise, test and THEN execute
+      if (!step.execute) {
+        return null
+      }
+      //TODO: recognise, test and THEN execute
 
-        // bot.postMessage({'command': 'execute', 'code': code})
-        // bot.onmessage = function(e) {
-        //     callback({
-        //       'course': course.name,
-        //       'lesson': course.currentLesson,
-        //       'step'  : course.lessons[course.currentLesson].currentStep,
-        //       'codeSample': step.codeSample,
-        //       'message': e.data
-        //     })
-        // }
-        let variants: string[] = this.recognise(message, step.patterns)
+      // bot.postMessage({'command': 'execute', 'code': code})
+      // bot.onmessage = function(e) {
+      //     callback({
+      //       'course': course.name,
+      //       'lesson': course.currentLesson,
+      //       'step'  : course.lessons[course.currentLesson].currentStep,
+      //       'codeSample': step.codeSample,
+      //       'message': e.data
+      //     })
+      // }
+      let variants: string[] = this.recognise(message, step.patterns)
 
-        result = step.execute(message, variants)
-        if (!result) { return null }
-
-        if(!result.state) {
-          result.state = message.state
-        } else {
-          let nextText = ''
-          let nextState = message.state
-          if(result.state.lesson) {
-            nextState.lesson = result.state.lesson
-            nextText = this.appendDescription(nextText, this.getLesson(nextState))
-          }
-          if(result.state.step) {
-            nextState.step = result.state.step
-            nextText = this.appendDescription(nextText, this.getStep(nextState))
-          }
-          if(nextText) {
-            result.next = {
-              sender: 'course',
-              text: nextText
-            }
-          }
+      let result = step.execute(message, variants)
+      if (!result) {
+        return null
+      }
+      let state = {
+        course: this.course.name,
+        lesson: result.state.lesson ? result.state.lesson : message.state.lesson,
+        step: result.state.step ? result.state.step : message.state.step
+      }
+      return {
+        sender: "course",
+        text: result.text,
+        state: state,
+        next: (!result.state || (!result.state.lesson && !result.state.step)) ? null : {
+          sender: "course",
+          text: (result.state.lesson ? this.getLesson(state).description : "") +
+          (result.state.step ? "\n" + this.getStep(state).description : "")
         }
       }
-      return result
-    }
-
-    private appendDescription(text:string, unit:IUnit) {
-      return text + '\n' + unit.description
     }
 
     private recognise(message: IMessage, patterns: IPattern[]): string[] {
@@ -157,5 +149,6 @@ namespace BT.Course {
 
     private getLesson(state: IState): ILesson {
       return this.lessons[this.lessonKey(state)]
-    }}
+    }
+  }
 }
