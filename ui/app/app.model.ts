@@ -78,7 +78,8 @@ namespace BT {
      **************************************************************************/
 
     constructor() {
-      this.initModel()
+      this.reset()
+      this.load()
     }
 
 
@@ -135,7 +136,11 @@ namespace BT {
       return this.model.version
     }
 
-    initModel(): void {
+    isDirty(): boolean {
+      return this.dirty
+    }
+
+    reset(): void {
       this.model = {
         actors: [
           {actorId: Actor.Teacher, name: "Бот-учитель" , icon: "date_range"},
@@ -150,36 +155,7 @@ namespace BT {
       }
     }
 
-    isDirty(): boolean {
-      return this.dirty
-    }
-
-    loadModel(): void {
-      let s = localStorage.getItem(MODEL_STORAGE_KEY)
-      if (s === null) { return }
-
-      let m = null
-
-      try {
-        m = JSON.parse(s)
-      } catch (e) {
-        console.log(e)
-      }
-
-      if (ModelController.isModelValid(m)) { this.model = m }
-    }
-
-    setEditor(editor: string): void {
-      this.model.editor = editor
-      this.model.editorChanged = new Date().getTime()
-      this.dirty = true
-    }
-
-    setState(state: Course.IState): void {
-      this.model.state = state
-    }
-
-    saveModel(): void {
+    save(): void {
       let s = null
 
       try {
@@ -192,6 +168,16 @@ namespace BT {
         localStorage.setItem(MODEL_STORAGE_KEY, s)
         this.dirty = false
       }
+    }
+
+    setEditor(editor: string): void {
+      this.model.editor = editor
+      this.model.editorChanged = new Date().getTime()
+      this.dirty = true
+    }
+
+    setState(state: Course.IState): void {
+      this.model.state = state
     }
 
 
@@ -222,6 +208,21 @@ namespace BT {
        || model.version.length === 0) { return false }
 
       return true
+    }
+
+    private load(): void {
+      let s = localStorage.getItem(MODEL_STORAGE_KEY)
+      if (s === null) { return }
+
+      let m = null
+
+      try {
+        m = JSON.parse(s)
+      } catch (e) {
+        console.log(e)
+      }
+
+      if (ModelController.isModelValid(m)) { this.model = m }
     }
   }
 }

@@ -12,7 +12,7 @@
 /* BT CSS */
 
 md-input-container { margin: 0; }
-md-list-item.md-2-line { min-height: auto; }
+md-list-item.md-2-line { margin-top: 0.5em; min-height: auto; }
 md-list-item > ng-md-icon:first-child { margin-top: 0.5em; margin-bottom: 1em; }
 md-toast { min-width: auto; }
 ng-md-icon { color: gray; }

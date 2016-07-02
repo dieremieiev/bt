@@ -33,11 +33,9 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor(private $mdToast) {
-      this.mc = new ModelController
-      this.mc.loadModel()
-
+    constructor(private $scope: ng.IScope, private $mdToast) {
       this.initML()
+      this.initModel()
       this.initController()
     }
 
@@ -59,7 +57,7 @@ namespace BT {
     }
 
     onTimer(): void {
-      var t = new Date().getTime()
+      let t = new Date().getTime()
 
       this.handleCourse("timer", String(t))
 
@@ -68,8 +66,7 @@ namespace BT {
       let i = this.mc.getEditorChanged()
 
       if (i !== 0 && t - i > SAVE_AFTER_CHANGES) {
-        this.mc.saveModel()
-        this.showToast(this.ml["code_saved"])
+        this.saveModel(true)
         this.handleCourse("editor", String(this.mc.getEditorChanged()))
       }
     }
@@ -100,6 +97,7 @@ namespace BT {
       })
 
       this.handleMessage(m)
+      this.updateAngular()
     }
 
     private handleMessage(m: Course.IMessage) {
@@ -128,7 +126,7 @@ namespace BT {
         b = true
       }
 
-      if (b) { this.mc.saveModel() }
+      if (b) { this.saveModel(false) }
 
       this.handleMessage(m.next)
     }
@@ -149,8 +147,13 @@ namespace BT {
       }
 
       if (s === "/reset") {
-        this.mc.initModel()
+        this.mc.reset()
         this.initController()
+        b = true
+      }
+
+      if (s === "/save") {
+        this.saveModel(true)
         b = true
       }
 
@@ -172,8 +175,12 @@ namespace BT {
     private initML(): void {
       this.ml = {
         "code_saved"  : "Сохранено",
-        "help_message": "Допустимые команды: /clear /help /reset"
+        "help_message": "Допустимые команды: /clear /help /reset /save"
       }
+    }
+
+    private initModel(): void {
+      this.mc = new ModelController
     }
 
     private initUI(): void {
@@ -228,7 +235,12 @@ namespace BT {
         this.handleCourse("chat", s)
       }
 
-      this.mc.saveModel()
+      this.saveModel(false)
+    }
+
+    private saveModel(showToast: boolean): void {
+      this.mc.save()
+      if (showToast) { this.showToast(this.ml["code_saved"]) }
     }
 
     private static scrollChat(): void {
@@ -241,7 +253,7 @@ namespace BT {
 
           let d = <HTMLScriptElement>o.children[0]
           d.scrollTop = d.scrollHeight - d.offsetHeight
-        }, 100)
+        }, 200)
       }, 100)
     }
 
@@ -257,6 +269,11 @@ namespace BT {
           .position("top right")
           .hideDelay(2000)
       )
+    }
+
+    private updateAngular(): void {
+      let scope = this.$scope
+      setTimeout(function() { scope.$apply() }, 0)
     }
 
     private updateUI(): void {
