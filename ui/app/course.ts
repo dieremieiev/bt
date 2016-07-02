@@ -3,17 +3,23 @@ namespace BT.Course {
   export type MessageType = "answer" | "command" | "question"
   export type SenderType = "bot" | "chat" | "course" | "editor" | "system" | "timer"
 
+  export interface IStateDetails {
+    course: ICourseModel
+    lesson: ILesson
+    step: IStep
+  }
+
   export interface IContext {
     [key: string]: string
   }
 
   export interface IMessage {
-    sender: SenderType
+    sender?: SenderType
     text: string
     code?: string
     state?: IState
     next?: IMessage
-    context?:IContext
+    context?: IContext
   }
 
   export interface IPattern {
@@ -38,7 +44,7 @@ namespace BT.Course {
 
   export interface IStep extends IUnit {
     patterns: IPattern[]
-    execute: (message: IMessage, quess: string[]) => IMessage
+    execute: (message: IMessage, variants: string[], details: IStateDetails) => IMessage
   }
 
   export interface IState {
@@ -70,6 +76,8 @@ namespace BT.Course {
 
     public handle(message: IMessage): IMessage {
       let step = this.getStep(message.state)
+      let lesson = this.getLesson(message.state)
+
       if (!step.execute) {
         return null
       }
@@ -87,29 +95,26 @@ namespace BT.Course {
       // }
       let variants: string[] = this.recognise(message, step.patterns)
 
-      let result = step.execute(message, variants)
+      let result = step.execute(message,variants,
+        {
+          step: step,
+          lesson: lesson,
+          course: this.course
+        })
       if (!result) {
         return null
       }
-      let state = {
+      result.state = {
         course: this.course.name,
         lesson: (result.state && result.state.lesson) ?
-                result.state.lesson :
-                message.state.lesson,
+          result.state.lesson :
+          message.state.lesson,
         step: (result.state && result.state.step) ?
-              result.state.step :
-              message.state.step
+          result.state.step :
+          message.state.step
       }
-      return {
-        sender: "course",
-        text: result.text,
-        state: state,
-        next: (!result.state || (!result.state.lesson && !result.state.step)) ? null : {
-          sender: "course",
-          text: (result.state.lesson ? this.getLesson(state).description : "") +
-          (result.state.step ? "\n" + this.getStep(state).description : "")
-        }
-      }
+      result.sender = "course"
+      return result
     }
 
     private recognise(message: IMessage, patterns: IPattern[]): string[] {
