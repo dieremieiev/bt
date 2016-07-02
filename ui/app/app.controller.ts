@@ -33,7 +33,7 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor(private $scope: ng.IScope, private $mdToast) {
+    constructor(private $mdToast, private $timeout: ng.ITimeoutService) {
       this.initML()
       this.initModel()
       this.initController()
@@ -85,19 +85,20 @@ namespace BT {
     private addMessage(actorId: number, text: string): void {
       this.mc.addMessage({ actorId: actorId, text: text })
       this.updateUI()
-      AppController.scrollChat()
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
+console.log("handleCourse")
       let m = this.course.handle({
         sender: sender,
         text  : text,
         code  : this.mc.getEditor(),
         state : this.mc.getState()
       })
-
+console.log(m)
       this.handleMessage(m)
-      this.updateAngular()
+      this.updateUI()
+console.log("handled")
     }
 
     private handleMessage(m: Course.IMessage) {
@@ -271,14 +272,14 @@ namespace BT {
       )
     }
 
-    private updateAngular(): void {
-      let scope = this.$scope
-      setTimeout(function() { scope.$apply() }, 0)
-    }
-
     private updateUI(): void {
       this.messages = this.mc.getFormattedMessages()
+console.log(this.messages.length)
       this.version  = this.mc.getVersion()
+
+      AppController.scrollChat()
+
+      this.$timeout(function () { AppController.scrollChat() })
     }
   }
 }
