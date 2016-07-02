@@ -12,8 +12,14 @@
 /* BT CSS */
 
 md-input-container { margin: 0; }
-ng-md-icon         { color: gray; }
-.md-char-counter   { color: gray; }
+md-list-item.md-2-line { min-height: auto; }
+md-list-item > ng-md-icon:first-child { margin-top: 0.5em; margin-bottom: 1em; }
+md-toast { min-width: auto; }
+ng-md-icon { color: gray; }
+
+.md-char-counter { color: gray; }
+.md-list-item-text h4 { color: gray; }
 
 .logo    { padding-left: 1em; }
+.person  { margin: 0 0.8em 0 0; }
 .version { font-size: 0.7em; margin-top: -2.5em; padding-right: 0.5em; }

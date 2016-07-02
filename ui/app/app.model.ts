@@ -10,7 +10,7 @@ namespace BT {
    * Enums
    ****************************************************************************/
 
-  export enum Actor { Teacher, Person, Bot }
+  export enum Actor { Teacher, Person, Bot, System }
 
 
   /*****************************************************************************
@@ -78,7 +78,7 @@ namespace BT {
      **************************************************************************/
 
     constructor() {
-      this.resetModel()
+      this.initModel()
     }
 
 
@@ -135,6 +135,21 @@ namespace BT {
       return this.model.version
     }
 
+    initModel(): void {
+      this.model = {
+        actors: [
+          {actorId: Actor.Teacher, name: "Бот-учитель" , icon: "date_range"},
+          {actorId: Actor.Person , name: "Пользователь", icon: "person"},
+          {actorId: Actor.Bot    , name: "MyBot"       , icon: "adb"},
+          {actorId: Actor.System , name: "Система"     , icon: "build"}
+        ],
+        editor       : "",
+        editorChanged: 0,
+        messages     : [],
+        version      : "0.0.1"
+      }
+    }
+
     isDirty(): boolean {
       return this.dirty
     }
@@ -152,20 +167,6 @@ namespace BT {
       }
 
       if (ModelController.isModelValid(m)) { this.model = m }
-    }
-
-    resetModel(): void {
-      this.model = {
-        actors: [
-          {actorId: Actor.Teacher, name: "Бот-учитель" , icon: "date_range"},
-          {actorId: Actor.Person , name: "Пользователь", icon: "person"},
-          {actorId: Actor.Bot    , name: "MyBot"       , icon: "adb"}
-        ],
-        editor       : "",
-        editorChanged: 0,
-        messages     : [],
-        version      : "0.0.1"
-      }
     }
 
     setEditor(editor: string): void {

@@ -3,7 +3,7 @@ namespace BT {
    * Constants
    ****************************************************************************/
 
-  const SAVE_AFTER_CHANGES   = 10000
+  const SAVE_AFTER_CHANGES   = 5000
   const TIMER_EVENT_INTERVAL = 10000
 
 
@@ -18,6 +18,7 @@ namespace BT {
 
     inputText: string = null
     messages : IFormattedMessage[]
+    ml       : { [key: string]: string }
     version  : string
 
     private commandPos: number = 0
@@ -36,6 +37,7 @@ namespace BT {
       this.mc = new ModelController
       this.mc.loadModel()
 
+      this.initML()
       this.initController()
     }
 
@@ -67,9 +69,7 @@ namespace BT {
 
       if (i !== 0 && t - i > SAVE_AFTER_CHANGES) {
         this.mc.saveModel()
-
-        this.showToast("Source code saved")
-
+        this.showToast(this.ml["code_saved"])
         this.handleCourse("editor", String(this.mc.getEditorChanged()))
       }
     }
@@ -88,6 +88,7 @@ namespace BT {
     private addMessage(actorId: number, text: string): void {
       this.mc.addMessage({ actorId: actorId, text: text })
       this.updateUI()
+      AppController.scrollChat()
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
@@ -143,12 +144,12 @@ namespace BT {
       }
 
       if (s === "/help") {
-        this.addMessage(Actor.Teacher, "/clear /help /reset")
+        this.addMessage(Actor.System, this.ml["help_message"])
         b = true
       }
 
       if (s === "/reset") {
-        this.mc.resetModel()
+        this.mc.initModel()
         this.initController()
         b = true
       }
@@ -166,6 +167,13 @@ namespace BT {
       this.handleCourse("system", "init")
       this.initUI()
       this.setCommandPos()
+    }
+
+    private initML(): void {
+      this.ml = {
+        "code_saved"  : "Сохранено",
+        "help_message": "Допустимые команды: /clear /help /reset"
+      }
     }
 
     private initUI(): void {
@@ -211,9 +219,9 @@ namespace BT {
       s = s.trim()
       if (s.length === 0) { return }
 
-      this.addMessage(Actor.Person, s)
-
       this.inputText = null
+
+      this.addMessage(Actor.Person, s)
       this.setCommandPos()
 
       if (this.handleSystemCommand(s) === false) {
@@ -221,8 +229,6 @@ namespace BT {
       }
 
       this.mc.saveModel()
-
-      AppController.scrollChat()
     }
 
     private static scrollChat(): void {
@@ -244,13 +250,13 @@ namespace BT {
     }
 
     private showToast(s: string): void {
-      this.$mdToast.showSimple(s)
-      // this.$mdToast.show(
-      //   this.$mdToast.simple()
-      //     .textContent(s)
-      //     .position("bottom left")
-      //     .hideDelay(3000)
-      // )
+      this.$mdToast.show(
+        this.$mdToast.simple()
+          .textContent(s)
+          .parent(document.getElementById("editor"))
+          .position("top right")
+          .hideDelay(2000)
+      )
     }
 
     private updateUI(): void {
