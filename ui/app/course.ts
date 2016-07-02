@@ -3,12 +3,17 @@ namespace BT.Course {
   export type MessageType = "answer" | "command" | "question"
   export type SenderType = "bot" | "chat" | "course" | "editor" | "system" | "timer"
 
+  export interface IContext {
+    [key: string]: string
+  }
+
   export interface IMessage {
     sender: SenderType
     text: string
     code?: string
     state?: IState
     next?: IMessage
+    context?:IContext
   }
 
   export interface IPattern {
@@ -88,8 +93,12 @@ namespace BT.Course {
       }
       let state = {
         course: this.course.name,
-        lesson: result.state.lesson ? result.state.lesson : message.state.lesson,
-        step: result.state.step ? result.state.step : message.state.step
+        lesson: (result.state && result.state.lesson) ?
+                result.state.lesson :
+                message.state.lesson,
+        step: (result.state && result.state.step) ?
+              result.state.step :
+              message.state.step
       }
       return {
         sender: "course",
