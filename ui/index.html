@@ -26,13 +26,13 @@
 
       <div flex layout="column" ng-click="ac.setFocusOnChat()">
         <md-virtual-repeat-container id="chatContainer" md-auto-shrink="true" flex>
-          <md-list-item class="md-2-line" md-virtual-repeat="m in ac.messages">
-            <ng-md-icon icon="{{m.icon}}" size="32"></ng-md-icon>
-            <div class="md-list-item-text" layout="column">
+          <div layout="row" class="list-item" md-virtual-repeat="m in ac.messages">
+            <ng-md-icon class="list-item-icon" icon="{{m.icon}}" size="32"></ng-md-icon>
+            <div class="list-item-text" layout="column" flex>
               <h4>{{m.name}}</h4>
               <p>{{m.text}}</p>
             </div>
-          </md-list-item>
+          </div>
         </md-virtual-repeat-container>
 
         <div layout="row" layout-padding>

@@ -88,17 +88,14 @@ namespace BT {
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
-console.log("handleCourse")
       let m = this.course.handle({
         sender: sender,
         text  : text,
         code  : this.mc.getEditor(),
         state : this.mc.getState()
       })
-console.log(m)
+
       this.handleMessage(m)
-      this.updateUI()
-console.log("handled")
     }
 
     private handleMessage(m: Course.IMessage) {
@@ -274,7 +271,6 @@ console.log("handled")
 
     private updateUI(): void {
       this.messages = this.mc.getFormattedMessages()
-console.log(this.messages.length)
       this.version  = this.mc.getVersion()
 
       AppController.scrollChat()
