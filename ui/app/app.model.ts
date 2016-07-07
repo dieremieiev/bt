@@ -77,10 +77,7 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor() {
-      this.reset()
-      this.load()
-    }
+    constructor() { this.reset() }
 
 
     /***************************************************************************
@@ -138,6 +135,21 @@ namespace BT {
 
     isDirty(): boolean {
       return this.dirty
+    }
+
+    load(): void {
+      let s = localStorage.getItem(MODEL_STORAGE_KEY)
+      if (s === null) { return }
+
+      let m = null
+
+      try {
+        m = JSON.parse(s)
+      } catch (e) {
+        console.log(e)
+      }
+
+      if (ModelController.isModelValid(m)) { this.model = m }
     }
 
     reset(): void {
@@ -208,21 +220,6 @@ namespace BT {
        || model.version.length === 0) { return false }
 
       return true
-    }
-
-    private load(): void {
-      let s = localStorage.getItem(MODEL_STORAGE_KEY)
-      if (s === null) { return }
-
-      let m = null
-
-      try {
-        m = JSON.parse(s)
-      } catch (e) {
-        console.log(e)
-      }
-
-      if (ModelController.isModelValid(m)) { this.model = m }
     }
   }
 }

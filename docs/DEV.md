@@ -5,3 +5,4 @@
 npm run typings -- install dt~jquery --save --global
 npm run typings -- install dt~angular --save --global
 npm run typings -- install dt~ace --save --global
+npm run typings -- install dt~jasmine --save --global

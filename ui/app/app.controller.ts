@@ -72,7 +72,7 @@ namespace BT {
     }
 
     setFocusOnChat(): void {
-      setTimeout(function() {
+      setTimeout(() => {
         document.getElementById("inputText").focus()
       }, 100)
     }
@@ -179,6 +179,7 @@ namespace BT {
 
     private initModel(): void {
       this.mc = new ModelController
+      this.mc.load()
     }
 
     private initUI(): void {
@@ -189,7 +190,7 @@ namespace BT {
       AppController.scrollChat()
 
       let self = this
-      setInterval(function() { self.onTimer() }, TIMER_EVENT_INTERVAL)
+      setInterval(() => { self.onTimer() }, TIMER_EVENT_INTERVAL)
 
       this.updateUI()
     }
@@ -238,6 +239,7 @@ namespace BT {
 
     private saveModel(showToast: boolean): void {
       this.mc.save()
+
       if (showToast) { this.showToast(this.ml["code_saved"]) }
     }
 
@@ -245,8 +247,8 @@ namespace BT {
       let o = document.getElementById("chatContainer")
       let h = o.style.height
 
-      setTimeout(function() {
-        setTimeout(function() {
+      setTimeout(() => {
+        setTimeout(() => {
           o.style.height = h
 
           let d = <HTMLScriptElement>o.children[0]
@@ -275,7 +277,7 @@ namespace BT {
 
       AppController.scrollChat()
 
-      this.$timeout(function () { AppController.scrollChat() })
+      this.$timeout(() => { AppController.scrollChat() })
     }
   }
 }
