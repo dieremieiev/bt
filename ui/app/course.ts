@@ -43,7 +43,7 @@ namespace BT.Course {
   }
 
   export interface IStep extends IUnit {
-    patterns: IPattern[]
+    patterns?: IPattern[]
     execute: (message: IMessage, variants: string[], details: IStateDetails) => IMessage
   }
 
@@ -67,7 +67,6 @@ namespace BT.Course {
     private steps: IStepsMap
     private lessons: ILessonsMap
     private course: ICourseModel
-    private worker: Worker = new Worker("js/botrunner")
 
     constructor(course: ICourseModel) {
       [this.lessons, this.steps] = this.createMapping(course)
@@ -81,19 +80,8 @@ namespace BT.Course {
       if (!step.execute) {
         return null
       }
-      //TODO: recognise, test and THEN execute
 
-      // bot.postMessage({'command': 'execute', 'code': code})
-      // bot.onmessage = function(e) {
-      //     callback({
-      //       'course': course.name,
-      //       'lesson': course.currentLesson,
-      //       'step'  : course.lessons[course.currentLesson].currentStep,
-      //       'codeSample': step.codeSample,
-      //       'message': e.data
-      //     })
-      // }
-      let variants: string[] = this.recognise(message, step.patterns)
+      let variants: string[] = !step.patterns ? null : this.recognise(message, step.patterns)
 
       let result = step.execute(message,variants,
         {
@@ -113,7 +101,20 @@ namespace BT.Course {
           result.state.step :
           message.state.step
       }
-      result.sender = "course"
+      if (result.sender === "bot") {
+        // bot.postMessage({'command': 'execute', 'code': code})
+        // bot.onmessage = function(e) {
+        //     callback({
+        //       'course': course.name,
+        //       'lesson': course.currentLesson,
+        //       'step'  : course.lessons[course.currentLesson].currentStep,
+        //       'codeSample': step.codeSample,
+        //       'message': e.data
+        //     })
+        // }
+      } else {
+        result.sender = "course"
+      }
       return result
     }
 
