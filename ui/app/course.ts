@@ -73,24 +73,24 @@ namespace BT.Course {
       this.course = course
     }
 
-    public handle(message: IMessage): IMessage {
+    public handle(message: IMessage, callback: (message: IMessage) => void): void {
       let step = this.getStep(message.state)
       let lesson = this.getLesson(message.state)
 
       if (!step.execute) {
-        return null
+        return
       }
 
       let variants: string[] = !step.patterns ? null : this.recognise(message, step.patterns)
 
-      let result = step.execute(message,variants,
+      let result = step.execute(message, variants,
         {
           step: step,
           lesson: lesson,
           course: this.course
         })
       if (!result) {
-        return null
+        return
       }
       result.state = {
         course: this.course.name,
@@ -115,7 +115,7 @@ namespace BT.Course {
       } else {
         result.sender = "course"
       }
-      return result
+      callback(result)
     }
 
     private recognise(message: IMessage, patterns: IPattern[]): string[] {
