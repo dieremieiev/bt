@@ -1,5 +1,4 @@
 namespace BT.Course {
-  // TODO: use enum
   export type MessageType = "answer" | "command" | "question"
   export type SenderType = "bot" | "chat" | "course" | "editor" | "system" | "timer"
 
@@ -67,10 +66,12 @@ namespace BT.Course {
     private steps: IStepsMap
     private lessons: ILessonsMap
     private course: ICourseModel
+    private worker: Worker
 
     constructor(course: ICourseModel) {
       [this.lessons, this.steps] = this.createMapping(course)
       this.course = course
+      this.worker = new Worker("/js/botrunner.js")
     }
 
     public handle(message: IMessage, callback: (message: IMessage) => void): void {
@@ -102,20 +103,15 @@ namespace BT.Course {
           message.state.step
       }
       if (result.sender === "bot") {
-        // bot.postMessage({'command': 'execute', 'code': code})
-        // bot.onmessage = function(e) {
-        //     callback({
-        //       'course': course.name,
-        //       'lesson': course.currentLesson,
-        //       'step'  : course.lessons[course.currentLesson].currentStep,
-        //       'codeSample': step.codeSample,
-        //       'message': e.data
-        //     })
-        // }
+        this.worker.postMessage({ "text": message.text, "code": message.code })
+        this.worker.onmessage = (message)=> {
+          result.text = message.data
+          callback(result)
+        }
       } else {
         result.sender = "course"
+        callback(result)
       }
-      callback(result)
     }
 
     private recognise(message: IMessage, patterns: IPattern[]): string[] {

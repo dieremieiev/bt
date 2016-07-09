@@ -109,7 +109,7 @@ namespace BT.Course {
                   case "timer":
                     return {
                       text: details.step.description,
-                      code: "function(){return 'hello word!'}",
+                      code: "return 'hello word!'",
                       next: {
                         text: details.step.help,
                         next: {
