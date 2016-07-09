@@ -1,5 +1,5 @@
 namespace BT {
-  describe("app.controller.spec", () => {
+  describe("app.editor.spec", () => {
 
     describe("Test Suite 1", () => {
       it("test", () => {

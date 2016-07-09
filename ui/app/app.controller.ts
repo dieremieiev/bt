@@ -88,17 +88,15 @@ namespace BT {
     }
 
     private handleCourse(sender: Course.SenderType, text: string) {
-      let m = this.course.handle({
+      this.course.handle({
         sender: sender,
         text  : text,
         code  : this.mc.getEditor(),
         state : this.mc.getState()
-      })
-
-      this.handleMessage(m)
+      }, m => { this.handleMessage(m) })
     }
 
-    private handleMessage(m: Course.IMessage) {
+    private handleMessage(m: Course.IMessage): void {
       if (!m) { return }
 
       let b = false
@@ -189,8 +187,7 @@ namespace BT {
 
       AppController.scrollChat()
 
-      let self = this
-      setInterval(() => { self.onTimer() }, TIMER_EVENT_INTERVAL)
+      setInterval(() => { this.onTimer() }, TIMER_EVENT_INTERVAL)
 
       this.updateUI()
     }
