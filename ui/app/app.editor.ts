@@ -24,7 +24,7 @@ namespace BT {
 
       this.setValue(value)
 
-      this.editor.getSession().on("change", function() { ac.onEditorChange() })
+      this.editor.getSession().on("change", () => { ac.onEditorChange() })
     }
 
 

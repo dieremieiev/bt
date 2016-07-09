@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "newLine"       : "LF",
+    "newLine": "LF",
     "removeComments": true,
-    "rootDir"       : "./app",
-    "outDir"        : "./js",
-    "target"        : "es5"
+    "rootDir": "./app",
+    "outDir": "./js",
+    "target": "es5"
   },
   "exclude": [
     "node_modules",
