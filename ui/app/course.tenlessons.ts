@@ -1,7 +1,7 @@
 
 namespace BT.Course {
   export interface ICourse {
-    handle: (message: IMessage) => IMessage
+    handle: (message: IMessage, callback:(IMessage)=>void) => void
   }
 
   let course: ICourse;
