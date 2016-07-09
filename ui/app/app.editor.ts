@@ -15,16 +15,18 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor(ac: AppController, elementId: string, value: string) {
+    constructor(elementId: string, value: string, callback: () => void) {
       this.editor = ace.edit(elementId)
 
       this.editor.$blockScrolling = Infinity
       this.editor.setTheme("ace/theme/monokai")
       this.editor.getSession().setMode("ace/mode/javascript")
 
+      // TODO: remove following, use special method this.setOnChangeCallback()
+
       this.setValue(value)
 
-      this.editor.getSession().on("change", () => { ac.onEditorChange() })
+      this.editor.getSession().on("change", callback)
     }
 
 
@@ -37,6 +39,8 @@ namespace BT {
     }
 
     setValue(value: string): void {
+      if (value === null || typeof value === "undefined") { value = "" }
+
       this.editor.setValue(value)
       this.editor.gotoLine(0)
     }

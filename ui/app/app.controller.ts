@@ -44,10 +44,6 @@ namespace BT {
      * Public
      **************************************************************************/
 
-    onEditorChange(): void {
-      this.mc.setEditor(this.ec.getValue())
-    }
-
     onInputTextKeyUp(event: KeyboardEvent): void {
       switch (event.which) {
         case 13: this.onEnter(); return
@@ -161,7 +157,8 @@ namespace BT {
       [this.course, state] = Course.getCourse(this.mc.getState())
       this.mc.setState(state)
 
-      this.ec = new EditorController(this, "editor", this.mc.getEditor())
+      this.ec = new EditorController("editor", this.mc.getEditor(),
+                                     () => { this.onEditorChange() })
 
       this.handleCourse("system", "init")
       this.initUI()
@@ -213,6 +210,10 @@ namespace BT {
       if (i >= 0) { this.inputText = pm[i].text }
 
       this.commandPos = i
+    }
+
+    private onEditorChange(): void {
+      this.mc.setEditor(this.ec.getValue())
     }
 
     private onEnter(): void {
