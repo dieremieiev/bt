@@ -1,0 +1,25 @@
+start:
+  system init:
+    - message: Несколько шагов чтобы немного освоиться
+    - message: Попробуйте написать что нибуть в чате
+    - next: chatting
+chatting:
+  chat .*:
+    - message: Все в порядке - двигаемся дальше
+    - next: goto start
+  editor .*:
+    - message: Попробуйте набрать какой-то текст
+goto start:
+  chat .*начало!:
+    - message: Отлично! В следующий раз урок начнется с начала
+    - next: hello world explanation
+hello world explanation:
+  timer .*:
+    - code: "return 'hello word!'"
+    - message: Сейчас попробуем запусить простейшую программу
+    - message: В редакторе появилась программа, попробуйте ее запустить набрав 'запустить!'
+    - next: hello world
+hello world:
+  chat .*запустить!:
+    - test: "<test case name>"
+    - bot: start
