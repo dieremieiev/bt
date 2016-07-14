@@ -15,18 +15,17 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor(elementId: string, value: string, callback: () => void) {
+    constructor(elementId: string) {
+      if (elementId === null || typeof elementId === "undefined"
+                             || elementId.trim().length === 0) {
+        throw new Error("elementId is not defined")
+      }
+
       this.editor = ace.edit(elementId)
 
       this.editor.$blockScrolling = Infinity
       this.editor.setTheme("ace/theme/monokai")
-      this.editor.getSession().setMode("ace/mode/javascript")
-
-      // TODO: remove following, use special method this.setOnChangeCallback()
-
-      this.setValue(value)
-
-      this.editor.getSession().on("change", callback)
+      this.editor.session.setMode("ace/mode/javascript")
     }
 
 
@@ -38,10 +37,14 @@ namespace BT {
         return this.editor.getValue()
     }
 
-    setValue(value: string): void {
-      if (value === null || typeof value === "undefined") { value = "" }
+    setOnChangeCallback(callback: () => void): void {
+      this.editor.session.on("change", callback)
+    }
 
-      this.editor.setValue(value)
+    setValue(s: string): void {
+      if (s === null || typeof s === "undefined") { s = "" }
+
+      this.editor.setValue(s)
       this.editor.gotoLine(0)
     }
   }

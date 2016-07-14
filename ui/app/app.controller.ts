@@ -157,8 +157,9 @@ namespace BT {
       [this.course, state] = Course.getCourse(this.mc.getState())
       this.mc.setState(state)
 
-      this.ec = new EditorController("editor", this.mc.getEditor(),
-                                     () => { this.onEditorChange() })
+      this.ec = new EditorController("editor")
+      this.ec.setValue(this.mc.getEditor())
+      this.ec.setOnChangeCallback(() => { this.onEditorChange() })
 
       this.handleCourse("system", "init")
       this.initUI()
