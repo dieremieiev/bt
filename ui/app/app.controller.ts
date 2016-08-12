@@ -244,6 +244,8 @@ namespace BT {
 
     private static scrollChat(): void {
       let o = document.getElementById("chatContainer")
+      if (!o) { return }
+
       let h = o.style.height
 
       setTimeout(() => {
