@@ -17,7 +17,8 @@
     "angular-aria": "1.5.8",
     "angular-messages": "1.5.8",
     "angular-material": "1.0.9",
-    "angular-material-icons": "0.7.1"
+    "angular-material-icons": "0.7.1",
+    "angular-mocks": "1.5.8"
   },
   "description": "Wordbook",
   "devDependencies": {

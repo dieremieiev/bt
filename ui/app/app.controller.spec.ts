@@ -1,18 +1,32 @@
 namespace BT {
   describe("app.controller.spec", () => {
-      // it("new AppController(null)", () => {
-      //   expect(() => {
-      //     new AppController(null)
-      //   }).toThrowError("elementId is not defined")
-      // })
+	  let toast
+    let ac: AppController
 
-
-    it("test1", () => {
-      // angular.module("BT", ["ngMaterial", "ngMdIcons"])
-      //   .controller("AppController", ["$mdToast", "$timeout", BT.AppController])
-
-      // expect(true).toEqual(true)
-      //new AppController(null, null)
+    beforeAll(() => {
+      toast = jasmine.createSpyObj("$mdToast", ["show", "simple"])
     })
+
+    beforeEach(angular.mock.inject($controller => {
+      ac = $controller(BT.AppController, { $mdToast: toast })
+    }))
+
+    describe("public properties", () => {
+      it("inputText === null", () => {
+        expect(null).toEqual(ac.inputText)
+      })
+
+      it("messages is Array", () => {
+        expect(ac.messages).toEqual(jasmine.any(Array))
+      })
+
+      it("ml is Object", () => {
+        expect(ac.ml).toEqual(jasmine.any(Object))
+      })
+
+      it("version === \"0.0.1\"", () => {
+        expect("0.0.1").toEqual(ac.version)
+      })
+    }
   })
 }

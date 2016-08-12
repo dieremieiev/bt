@@ -69,7 +69,8 @@ namespace BT {
 
     setFocusOnChat(): void {
       setTimeout(() => {
-        document.getElementById("inputText").focus()
+        let o = document.getElementById("inputText")
+        if (o) { o.focus() }
       }, 100)
     }
 
