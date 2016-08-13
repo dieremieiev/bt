@@ -18,7 +18,7 @@ namespace BT {
 
     inputText: string = null
     messages : IFormattedMessage[]
-    ml       : { [key: string]: string }
+    ml       : {[key: string]: string}
     version  : string
 
     private commandPos: number = 0
@@ -80,7 +80,7 @@ namespace BT {
      **************************************************************************/
 
     private addMessage(actorId: number, text: string): void {
-      this.mc.addMessage({ actorId: actorId, text: text })
+      this.mc.addMessage({actorId: actorId, text: text})
       this.updateUI()
     }
 
@@ -169,14 +169,26 @@ namespace BT {
 
     private initML(): void {
       this.ml = {
-        "code_saved"  : "Сохранено",
-        "help_message": "Допустимые команды: /clear /help /reset /save"
+        "actor_bot"    : "MyBot",
+        "actor_person" : "Пользователь",
+        "actor_system" : "Система",
+        "actor_teacher": "Бот-учитель",
+        "code_saved"   : "Сохранено",
+        "help_message" : "Допустимые команды: /clear /help /reset /save"
       }
     }
 
     private initModel(): void {
+      let ml = this.ml
+
       this.mc = new ModelController
       this.mc.load()
+      this.mc.setActors([
+        {actorId: Actor.Teacher, name: ml["actor_teacher"], icon: "date_range"},
+        {actorId: Actor.Person , name: ml["actor_person"] , icon: "person"},
+        {actorId: Actor.Bot    , name: ml["actor_bot"]    , icon: "adb"},
+        {actorId: Actor.System , name: ml["actor_system"] , icon: "build"}
+      ])
     }
 
     private initUI(): void {

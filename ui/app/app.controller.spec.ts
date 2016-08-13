@@ -12,21 +12,35 @@ namespace BT {
     }))
 
     describe("public properties", () => {
-      it("inputText === null", () => {
+      it("inputText", () => {
         expect(null).toEqual(ac.inputText)
       })
 
-      it("messages is Array", () => {
+      it("messages", () => {
         expect(ac.messages).toEqual(jasmine.any(Array))
       })
 
-      it("ml is Object", () => {
+      it("ml", () => {
         expect(ac.ml).toEqual(jasmine.any(Object))
       })
 
-      it("version === \"0.0.1\"", () => {
+      it("version", () => {
         expect("0.0.1").toEqual(ac.version)
       })
-    }
+    })
+
+    describe("public methods", () => {
+      it("onInputTextKeyUp(event: KeyboardEvent): void", () => {
+        expect(() => { ac.onInputTextKeyUp(new KeyboardEvent(null)) }).not.toThrowError()
+      })
+
+      it("onTimer(): void", () => {
+        expect(() => { ac.onTimer() }).not.toThrowError()
+      })
+
+      it("setFocusOnChat(): void", () => {
+        expect(() => { ac.setFocusOnChat() }).not.toThrowError()
+      })
+    })
   })
 }

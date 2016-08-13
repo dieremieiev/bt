@@ -18,7 +18,6 @@ namespace BT {
    ****************************************************************************/
 
   export interface IModel {
-    actors       : IActor[]
     editor       : string
     editorChanged: number
     messages     : IMessage[]
@@ -42,7 +41,7 @@ namespace BT {
    * Interface Actor
    ****************************************************************************/
 
-  interface IActor {
+  export interface IActor {
     actorId: number
     name   : string
     icon   : string
@@ -53,7 +52,7 @@ namespace BT {
    * Interface ChatMessage
    ****************************************************************************/
 
-  interface IMessage {
+  export interface IMessage {
     actorId: number
     text   : string
   }
@@ -68,9 +67,13 @@ namespace BT {
      * State
      **************************************************************************/
 
+    private actors: IActor[]
+
     private model: IModel
 
     private dirty: boolean = false
+
+    private storageKey = MODEL_STORAGE_KEY
 
 
     /***************************************************************************
@@ -85,7 +88,9 @@ namespace BT {
      **************************************************************************/
 
     addMessage(message: IMessage): void {
-      this.model.messages.push(message)
+      if (message) {
+        this.model.messages.push(message)
+      }
     }
 
     clearMessages(): void {
@@ -103,7 +108,7 @@ namespace BT {
     getFormattedMessages(): IFormattedMessage[] {
       let messages  = this.model.messages
       let count     = messages.length
-      let formatted = new Array(count)
+      let formatted = []
 
       for (let i = 0; i < count; i++) {
         let message = messages[i]
@@ -111,11 +116,7 @@ namespace BT {
 
         if (actor === null) { continue }
 
-        formatted[i] = {
-          icon: actor.icon,
-          name: actor.name,
-          text: message.text
-        }
+        formatted.push({ icon: actor.icon, name: actor.name, text: message.text })
       }
 
       return formatted
@@ -138,7 +139,7 @@ namespace BT {
     }
 
     load(): void {
-      let s = localStorage.getItem(MODEL_STORAGE_KEY)
+      let s = localStorage.getItem(this.storageKey)
       if (s === null) { return }
 
       let m = null
@@ -154,12 +155,6 @@ namespace BT {
 
     reset(): void {
       this.model = {
-        actors: [
-          {actorId: Actor.Teacher, name: "Бот-учитель" , icon: "date_range"},
-          {actorId: Actor.Person , name: "Пользователь", icon: "person"},
-          {actorId: Actor.Bot    , name: "MyBot"       , icon: "adb"},
-          {actorId: Actor.System , name: "Система"     , icon: "build"}
-        ],
         editor       : "",
         editorChanged: 0,
         messages     : [],
@@ -177,9 +172,13 @@ namespace BT {
       }
 
       if (s !== null) {
-        localStorage.setItem(MODEL_STORAGE_KEY, s)
+        localStorage.setItem(this.storageKey, s)
         this.dirty = false
       }
+    }
+
+    setActors(actors: IActor[]): void {
+      this.actors = actors
     }
 
     setEditor(editor: string): void {
@@ -192,15 +191,21 @@ namespace BT {
       this.model.state = state
     }
 
+    setStorageKey(key: string): void {
+      this.storageKey = key
+    }
+
 
     /***************************************************************************
      * Pivate
      **************************************************************************/
 
     private getActor(message: IMessage): IActor {
+      if (!this.actors) { return null }
+
       let id = message.actorId
 
-      let fa = this.model.actors.filter(actor => actor.actorId === id)
+      let fa = this.actors.filter(actor => actor.actorId === id)
       if (typeof fa === "undefined" || fa.length === 0) { return null }
 
       return fa[0]
@@ -209,14 +214,12 @@ namespace BT {
     private static isModelValid(model: IModel): boolean {
       if (model === null
        || typeof model               !== "object"
-       || typeof model.actors        !== "object"
        || typeof model.editor        !== "string"
        || typeof model.editorChanged !== "number"
        || typeof model.messages      !== "object"
        || typeof model.version       !== "string") { return false }
 
-      if (!(model.actors instanceof Array) || model.actors.length < 3
-       || !(model.messages instanceof Array)
+      if (!(model.messages instanceof Array)
        || model.version.length === 0) { return false }
 
       return true

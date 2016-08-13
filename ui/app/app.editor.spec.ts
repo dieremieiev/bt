@@ -1,15 +1,15 @@
 namespace BT {
   describe("app.editor.spec", () => {
     describe("constructor", () => {
-      it("new EditorController(null)", () => {
-        expect(() => {
-          new EditorController(null)
-        }).toThrowError("elementId is not defined")
-      })
-
       it("new EditorController(undefined)", () => {
         expect(() => {
           new EditorController(undefined)
+        }).toThrowError("elementId is not defined")
+      })
+
+      it("new EditorController(null)", () => {
+        expect(() => {
+          new EditorController(null)
         }).toThrowError("elementId is not defined")
       })
 
@@ -38,33 +38,55 @@ namespace BT {
       })
     })
 
-    describe("get/set value", () => {
-      it("setValue(null)", () => {
-        let ec = new EditorController("editor")
-        ec.setValue(null)
-        expect("").toEqual(ec.getValue())
+    describe("public methods", () => {
+      let ec: EditorController
+
+      beforeEach(() => {
+        ec = new EditorController("editor")
+      })
+
+      it("getValue(): string", () => {
+        expect(() => { ec.getValue() }).not.toThrowError()
+      })
+
+      it("setOnChangeCallback(callback: () => void): void", () => {
+        expect(() => { ec.setOnChangeCallback(() => {}) }).not.toThrowError()
+      })
+
+      it("setValue(s: String): void", () => {
+        expect(() => { ec.setValue(null) }).not.toThrowError()
+      })
+    })
+
+    describe("test getValue() & setValue(...)", () => {
+      let ec: EditorController
+
+      beforeEach(() => {
+        ec = new EditorController("editor")
       })
 
       it("setValue(undefined)", () => {
-        let ec = new EditorController("editor")
         ec.setValue(undefined)
         expect("").toEqual(ec.getValue())
       })
 
+      it("setValue(null)", () => {
+        ec.setValue(null)
+        expect("").toEqual(ec.getValue())
+      })
+
       it("setValue(\"\")", () => {
-        let ec = new EditorController("editor")
         ec.setValue("")
         expect("").toEqual(ec.getValue())
       })
 
       it("setValue(\"var i = 0;\")", () => {
-        let ec = new EditorController("editor")
         ec.setValue("var i = 0;")
         expect("var i = 0;").toEqual(ec.getValue())
       })
     })
 
-    describe("callback", () => {
+    describe("test callbacks", () => {
       let ec: EditorController
       let s : string
 
@@ -77,13 +99,13 @@ namespace BT {
         ec.setValue("?")
       })
 
-      it("setValue(null)", () => {
-        ec.setValue(null)
+      it("setValue(undefined)", () => {
+        ec.setValue(undefined)
         expect("").toEqual(s)
       })
 
-      it("setValue(undefined)", () => {
-        ec.setValue(undefined)
+      it("setValue(null)", () => {
+        ec.setValue(null)
         expect("").toEqual(s)
       })
 
