@@ -33,7 +33,8 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor(private $http: ng.IHttpService, private $mdToast, private $timeout: ng.ITimeoutService) {
+    constructor(private $http: ng.IHttpService
+              , private $timeout: ng.ITimeoutService, private $mdToast) {
       this.initML()
       this.initModel()
       this.initController()
@@ -43,6 +44,18 @@ namespace BT {
     /***************************************************************************
      * Public
      **************************************************************************/
+
+    onCourseLoaded(course: Course.ICourseModel): void {
+      let state
+      [this.course, state] = Course.getCourse(this.mc.getState(), course)
+      this.mc.setState(state)
+
+      this.ec.setOnChangeCallback(() => { this.onEditorChange() })
+
+      this.handleCourse("system", "init")
+      this.initUI()
+      this.setCommandPos()
+    }
 
     onInputTextKeyUp(event: KeyboardEvent): void {
       switch (event.which) {
@@ -152,18 +165,11 @@ namespace BT {
     }
 
     private initController(): void {
+      this.ec = new EditorController("editor")
+      this.ec.setValue(this.mc.getEditor())
+
       this.$http.get("course.json").success((course: Course.ICourseModel) => {
-        let state
-        [this.course, state] = Course.getCourse(this.mc.getState(), course)
-        this.mc.setState(state)
-
-        this.ec = new EditorController("editor")
-        this.ec.setValue(this.mc.getEditor())
-        this.ec.setOnChangeCallback(() => { this.onEditorChange() })
-
-        this.handleCourse("system", "init")
-        this.initUI()
-        this.setCommandPos()
+        this.onCourseLoaded(course)
       })
     }
 
