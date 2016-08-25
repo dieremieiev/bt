@@ -100,9 +100,7 @@ namespace BT {
 
       if (m.state) {
         let state = this.mc.getState()
-        if (!state || (state.course !== m.state.course)
-                   || (state.lesson !== m.state.lesson)
-                   || (state.step   !== m.state.step)) {
+        if (!state || (state.step   !== m.state.step)) {
           this.mc.setState(m.state)
           b = true
         }
