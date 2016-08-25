@@ -33,7 +33,7 @@ namespace BT {
      * Constructor
      **************************************************************************/
 
-    constructor(private $mdToast, private $timeout: ng.ITimeoutService) {
+    constructor(private $http: ng.IHttpService, private $mdToast, private $timeout: ng.ITimeoutService) {
       this.initML()
       this.initModel()
       this.initController()
@@ -152,17 +152,19 @@ namespace BT {
     }
 
     private initController(): void {
-      let state
-      [this.course, state] = Course.getCourse(this.mc.getState())
-      this.mc.setState(state)
+      this.$http.get("course.json").success((course: Course.ICourseModel) => {
+        let state
+        [this.course, state] = Course.getCourse(this.mc.getState(), course)
+        this.mc.setState(state)
 
-      this.ec = new EditorController("editor")
-      this.ec.setValue(this.mc.getEditor())
-      this.ec.setOnChangeCallback(() => { this.onEditorChange() })
+        this.ec = new EditorController("editor")
+        this.ec.setValue(this.mc.getEditor())
+        this.ec.setOnChangeCallback(() => { this.onEditorChange() })
 
-      this.handleCourse("system", "init")
-      this.initUI()
-      this.setCommandPos()
+        this.handleCourse("system", "init")
+        this.initUI()
+        this.setCommandPos()
+      })
     }
 
     private initML(): void {
