@@ -45,7 +45,8 @@
     "start": "tsc && concurrently \"npm run tsc:w\" \"npm run lite\"",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "typings": "typings"
+    "typings": "typings",
+    "course": "cat course/* | js-yaml | node scripts/parse_course.js > course.json"
   },
   "version": "0.0.1"
 }
