@@ -75,14 +75,14 @@ namespace BT.Course {
                 result.code = action.payload
               }
               case "message": {
-                if (!result.text) {
-                  result.text = action.payload //TODO multiple messages
-                } else {
-                  let next = result.next
-                  while (next) {
-                    next = next.next
+                let next = result
+                while (next) {
+                  if(!next.text) {
+                    next.text = action.payload
+                  } else if (!next.next) {
+                    next.next = {text:''}
                   }
-                  next = {text: action.payload}
+                  next = next.next
                 }
               }
               case "test": {
@@ -96,12 +96,13 @@ namespace BT.Course {
                 }
               }
               case "next": {
-                result.state = {step: message.state.step, context: message.state.context}
+                result.state = {step: action.payload, context: message.state.context}
               }
             }
           }
         }
       }
+      callback(result)
     }
 
     private createMapping(course: ICourseModel): IStepsMap {
