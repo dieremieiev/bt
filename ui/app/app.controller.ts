@@ -17,23 +17,28 @@ namespace BT {
      **************************************************************************/
 
     inputText: string = null
+    isReady  : boolean = false
     messages : IFormattedMessage[]
     ml       : {[key: string]: string}
     version  : string
 
     private commandPos: number = 0
+    private course: Course.ICourse
 
     private mc: ModelController
     private ec: EditorController
 
-    private course: Course.ICourse
+    private static refChatContainer: HTMLElement
+    private static refEditor       : HTMLElement
+    private static refInputText    : HTMLElement
 
 
     /***************************************************************************
      * Constructor
      **************************************************************************/
 
-    constructor(private $http: ng.IHttpService, private $mdToast, private $timeout: ng.ITimeoutService) {
+    constructor(private $http: ng.IHttpService
+              , private $timeout: ng.ITimeoutService, private $mdToast) {
       this.initML()
       this.initModel()
       this.initController()
@@ -53,6 +58,8 @@ namespace BT {
     }
 
     onTimer(): void {
+      if (!this.isReady) { return }
+
       let t = new Date().getTime()
 
       this.handleCourse("timer", String(t))
@@ -69,8 +76,7 @@ namespace BT {
 
     setFocusOnChat(): void {
       setTimeout(() => {
-        let o = document.getElementById("inputText")
-        if (o) { o.focus() }
+        if (AppController.refInputText) { AppController.refInputText.focus() }
       }, 100)
     }
 
@@ -152,18 +158,11 @@ namespace BT {
     }
 
     private initController(): void {
+      this.ec = new EditorController("editor")
+      this.ec.setValue(this.mc.getEditor())
+
       this.$http.get("course.json").success((course: Course.ICourseModel) => {
-        let state
-        [this.course, state] = Course.getCourse(this.mc.getState(), course)
-        this.mc.setState(state)
-
-        this.ec = new EditorController("editor")
-        this.ec.setValue(this.mc.getEditor())
-        this.ec.setOnChangeCallback(() => { this.onEditorChange() })
-
-        this.handleCourse("system", "init")
-        this.initUI()
-        this.setCommandPos()
+        this.onCourseLoaded(course)
       })
     }
 
@@ -191,7 +190,15 @@ namespace BT {
       ])
     }
 
+    private static initReferences(): void {
+      AppController.refInputText     = document.getElementById("inputText")
+      AppController.refChatContainer = document.getElementById("chatContainer")
+      AppController.refEditor        = document.getElementById("editor")
+    }
+
     private initUI(): void {
+      AppController.initReferences()
+
       window.onresize = AppController.scrollChat
 
       this.setFocusOnChat()
@@ -226,12 +233,26 @@ namespace BT {
       this.commandPos = i
     }
 
+    private onCourseLoaded(course: Course.ICourseModel): void {
+      let state
+      [this.course, state] = Course.getCourse(this.mc.getState(), course)
+      this.mc.setState(state)
+
+      this.ec.setOnChangeCallback(() => { this.onEditorChange() })
+
+      this.handleCourse("system", "init")
+      this.initUI()
+      this.setCommandPos()
+
+      this.isReady = true
+    }
+
     private onEditorChange(): void {
       this.mc.setEditor(this.ec.getValue())
     }
 
     private onEnter(): void {
-      let s: string = this.inputText
+      let s = this.inputText
       if (!s) { return }
 
       s = s.trim()
@@ -256,16 +277,17 @@ namespace BT {
     }
 
     private static scrollChat(): void {
-      let o = document.getElementById("chatContainer")
-      if (!o) { return }
+      let cc = AppController.refChatContainer
 
-      let h = o.style.height
+      if (!cc) { return }
+
+      let h = cc.style.height
 
       setTimeout(() => {
         setTimeout(() => {
-          o.style.height = h
+          cc.style.height = h
 
-          let d = <HTMLScriptElement>o.children[0]
+          let d = <HTMLScriptElement>cc.children[0]
           d.scrollTop = d.scrollHeight - d.offsetHeight
         }, 200)
       }, 100)
