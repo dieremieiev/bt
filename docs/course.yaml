@@ -21,5 +21,5 @@ hello world explanation:
     - next: hello world
 hello world:
   chat .*запустить!:
-    - test: "<test case name>"
+    - test: ["input","output","tip"]
     - bot: start

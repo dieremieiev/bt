@@ -1,3 +1,14 @@
+interface IAether {
+  transpile: (string) => void,
+  createFunction: () => () => string
+}
+
+interface IAetherFactory {
+  new():IAether
+}
+
+declare var Aether: IAetherFactory
+
 namespace BT.Course {
   export type MessageType = "answer" | "command" | "question"
   export type SenderType = "bot" | "chat" | "course" | "editor" | "system" | "timer"
@@ -43,7 +54,7 @@ namespace BT.Course {
 
   export interface IAction {
     actionType: ActionType
-    payload: string
+    payload: any
   }
 
   interface IStepsMap {
@@ -65,16 +76,17 @@ namespace BT.Course {
       let step = this.getStep(message.state.step)
       let result:IMessage = {
         text: null,
-        state: message.state
+        state: message.state,
+        code: message.code
       }
       for(var aCase of step.cases) {
         if(aCase.sender == message.sender && new RegExp(aCase.pattern).test(message.text)) {
           for(var action of aCase.actions) {
             switch(action.actionType) {
-              case "code": {
+              case "code":
                 result.code = action.payload
-              }
-              case "message": {
+                break
+              case "message":
                 let next = result
                 while (next) {
                   if(!next.text) {
@@ -84,20 +96,29 @@ namespace BT.Course {
                   }
                   next = next.next
                 }
-              }
-              case "test": {
-                //TODO: implement unit tests
-              }
-              case "bot": {
-                this.worker.postMessage({ "text": message.text, "code": message.code })
+                break
+              case "test":
+                let input = action.payload[0]
+                let output = action.payload[1]
+                let tip = action.payload[2]
+                let scriptResult = this.runScript(result.code, input)
+                if(!new RegExp(output).test(scriptResult)) {
+                  callback({
+                    text:tip
+                  })
+                  return
+                }
+                break
+              case "bot":
+                this.worker.postMessage({ "text": message.text, "code": result.code })
                 this.worker.onmessage = (message)=> {
                   result.text = message.data
                   callback(result)
                 }
-              }
-              case "next": {
+                return
+              case "next":
                 result.state = {step: action.payload, context: message.state.context}
-              }
+                break
             }
           }
         }
@@ -111,6 +132,13 @@ namespace BT.Course {
           stepsMap[step.name] = step
         }
       return stepsMap
+    }
+
+    private runScript(script:string, message:string): string {
+      let aethr = new Aether()
+      aethr.transpile(script + "; return main('" + message + "');")
+      let f = aethr.createFunction()
+      return f()
     }
 
     private getStep(step: string): IStep {

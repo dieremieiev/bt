@@ -1,5 +1,7 @@
 start:
   system init:
+    - code: "function main(message){return message}"
+    - test: ["input","output","tip"]
     - message: Несколько шагов чтобы немного освоиться
     - message: Попробуйте написать что нибуть в чате
     - next: chatting
@@ -21,5 +23,5 @@ hello world explanation:
     - next: hello world
 hello world:
   chat .*запустить!:
-    - test: "<test case name>"
+    - test: ["input","output","tip"]
     - bot: start
