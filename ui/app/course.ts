@@ -1,6 +1,15 @@
 interface IAether {
-  transpile: (string) => void,
+  transpile: (string) => void
   createFunction: () => () => string
+  problems: IAetherProblems
+}
+
+interface IAetherProblems {
+  errors: IAetherError[]
+}
+
+interface IAetherError {
+  message: string
 }
 
 interface IAetherFactory {
@@ -104,7 +113,7 @@ namespace BT.Course {
                 let scriptResult = this.runScript(result.code, input)
                 if(!new RegExp(output).test(scriptResult)) {
                   callback({
-                    text:tip
+                    text:tip + ' : ' + scriptResult
                   })
                   return
                 }
@@ -137,6 +146,9 @@ namespace BT.Course {
     private runScript(script:string, message:string): string {
       let aethr = new Aether()
       aethr.transpile(script + "; return main('" + message + "');")
+      if(aethr.problems.errors.length > 0) {
+        return aethr.problems.errors[0].message
+      }
       let f = aethr.createFunction()
       return f()
     }
