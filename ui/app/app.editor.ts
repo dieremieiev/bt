@@ -42,6 +42,8 @@ namespace BT {
     }
 
     setValue(s: string): void {
+      if (s === this.getValue()) { return }
+
       if (s === null || typeof s === "undefined") { s = "" }
 
       this.editor.setValue(s)
