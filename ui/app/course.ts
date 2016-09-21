@@ -145,7 +145,8 @@ namespace BT.Course {
 
     private runScript(script:string, message:string): string {
       let aethr = new Aether()
-      aethr.transpile(script + "; return main('" + message + "');")
+      // aethr.transpile(script + "; return main('" + message + "');")
+      aethr.transpile('return ' + script);
       if(aethr.problems.errors.length > 0) {
         return aethr.problems.errors[0].message
       }
