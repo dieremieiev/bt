@@ -118,7 +118,7 @@ namespace BT {
         b = true
       }
 
-      if (m.code) {
+      if (m.code && m.code != this.ec.getValue()) {
         this.ec.setValue(m.code)
         b = true
       }

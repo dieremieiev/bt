@@ -181,8 +181,10 @@ namespace BT {
       this.actors = actors
     }
 
-    setEditor(editor: string): void {
-      this.model.editor = editor
+    setEditor(value: string): void {
+      if (this.model.editor === value) { return  }
+
+      this.model.editor = value
       this.model.editorChanged = new Date().getTime()
       this.dirty = true
     }
