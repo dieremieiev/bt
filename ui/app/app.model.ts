@@ -106,9 +106,9 @@ namespace BT {
     }
 
     getFormattedMessages(): IFormattedMessage[] {
-      let messages  = this.model.messages
-      let count     = messages.length
-      let formatted = []
+      let messages = this.model.messages
+      let count    = messages.length
+      let formatted: IFormattedMessage[] = []
 
       for (let i = 0; i < count; i++) {
         let message = messages[i]
@@ -126,7 +126,7 @@ namespace BT {
       return this.model.messages.filter(m => m.actorId === Actor.Person)
     }
 
-    getState(): Course.IState {
+    getState(): Course.IState | undefined {
       return this.model.state
     }
 
@@ -150,7 +150,7 @@ namespace BT {
         console.log(e)
       }
 
-      if (ModelController.isModelValid(m)) { this.model = m }
+      if (m != null && ModelController.isModelValid(m)) { this.model = m }
     }
 
     reset(): void {
@@ -163,15 +163,16 @@ namespace BT {
     }
 
     save(): void {
-      let s = null
+      let s: string
 
       try {
         s = JSON.stringify(this.model)
       } catch (e) {
         console.log(e)
+        return
       }
 
-      if (s !== null) {
+      if (s) {
         localStorage.setItem(this.storageKey, s)
         this.dirty = false
       }
@@ -202,7 +203,7 @@ namespace BT {
      * Pivate
      **************************************************************************/
 
-    private getActor(message: IMessage): IActor {
+    private getActor(message: IMessage): IActor | null {
       if (!this.actors) { return null }
 
       let id = message.actorId
@@ -214,7 +215,7 @@ namespace BT {
     }
 
     private static isModelValid(model: IModel): boolean {
-      if (model === null
+      if (!model
        || typeof model               !== "object"
        || typeof model.editor        !== "string"
        || typeof model.editorChanged !== "number"

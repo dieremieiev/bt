@@ -16,8 +16,7 @@ namespace BT {
      **************************************************************************/
 
     constructor(elementId: string) {
-      if (elementId === null || typeof elementId === "undefined"
-                             || elementId.trim().length === 0) {
+      if (!elementId || !elementId.trim()) {
         throw new Error("elementId is not defined")
       }
 
@@ -34,7 +33,7 @@ namespace BT {
      **************************************************************************/
 
     getValue(): string {
-        return this.editor.getValue()
+      return this.editor.getValue()
     }
 
     setOnChangeCallback(callback: () => void): void {
@@ -44,6 +43,7 @@ namespace BT {
     setValue(s: string): void {
       if (s === this.getValue()) { return }
 
+      // note: runtime check
       if (s === null || typeof s === "undefined") { s = "" }
 
       this.editor.setValue(s)

@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "newLine": "LF",
+    "outDir": "./js",
     "removeComments": true,
     "rootDir": "./app",
-    "outDir": "./js",
+    "strictNullChecks": true,
     "target": "es5"
   },
   "exclude": [

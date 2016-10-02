@@ -16,7 +16,7 @@ namespace BT {
      * State
      **************************************************************************/
 
-    inputText: string = null
+    inputText: string = ""
     isReady  : boolean = false
     messages : IFormattedMessage[]
     ml       : {[key: string]: string}
@@ -28,9 +28,9 @@ namespace BT {
     private mc: ModelController
     private ec: EditorController
 
-    private static refChatContainer: HTMLElement
-    private static refEditor       : HTMLElement
-    private static refInputText    : HTMLElement
+    private static refChatContainer: HTMLElement | null
+    private static refEditor       : HTMLElement | null
+    private static refInputText    : HTMLElement | null
 
 
     /***************************************************************************
@@ -99,7 +99,7 @@ namespace BT {
       }, m => { this.handleMessage(m) })
     }
 
-    private handleMessage(m: Course.IMessage): void {
+    private handleMessage(m: Course.IMessage | undefined): void {
       if (!m) { return }
 
       let b = false
@@ -161,8 +161,10 @@ namespace BT {
       this.ec = new EditorController("editor")
       this.ec.setValue(this.mc.getEditor())
 
-      this.$http.get("course.json").success((course: Course.ICourseModel) => {
-        this.onCourseLoaded(course)
+      this.$http.get("course.json").then((response) => {
+        if (!response || !response.data) { return }
+
+        this.onCourseLoaded(<Course.ICourseModel>response.data)
       })
     }
 
@@ -216,7 +218,7 @@ namespace BT {
 
       if (i > pm.length) { i = pm.length }
 
-      this.inputText = i < pm.length ? pm[i].text : null
+      this.inputText = i < pm.length ? pm[i].text : ""
 
       this.commandPos = i
     }
@@ -258,7 +260,7 @@ namespace BT {
       s = s.trim()
       if (s.length === 0) { return }
 
-      this.inputText = null
+      this.inputText = ""
 
       this.addMessage(Actor.Person, s)
       this.setCommandPos()
@@ -278,13 +280,14 @@ namespace BT {
 
     private static scrollChat(): void {
       let cc = AppController.refChatContainer
-
-      if (!cc) { return }
+      if (cc === null) { return }
 
       let h = cc.style.height
 
       setTimeout(() => {
         setTimeout(() => {
+          if (cc === null) { return }
+
           cc.style.height = h
 
           let d = <HTMLScriptElement>cc.children[0]

@@ -6,11 +6,14 @@ namespace BT.Course {
   let course: ICourse;
 
   export function getCourse(state?: IState, courseDescription?: ICourseModel): [ICourse, IState] {
-    return [course ? course :
-      course = new CourseRunner(courseDescription),
-      state ? state : {
-        step: "start"
+    if (!course) {
+      if (!courseDescription) {
+        throw new Error("course is not defined")
       }
-    ]
+
+      course = new CourseRunner(courseDescription)
+    }
+
+    return [course, state ? state : { step: "start" }]
   }
 }

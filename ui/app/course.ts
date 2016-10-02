@@ -82,26 +82,28 @@ namespace BT.Course {
     }
 
     public handle(message: IMessage, callback: (message: IMessage) => void): void {
-      let step = this.getStep(message.state.step)
+      let step = this.getStep(message.state!.step)
+
       let result:IMessage = {
-        text: null,
+        text: "",
         state: message.state,
         code: message.code
       }
-      for(var aCase of step.cases) {
-        if(aCase.sender == message.sender && new RegExp(aCase.pattern).test(message.text)) {
-          for(var action of aCase.actions) {
+
+      for (var aCase of step.cases) {
+        if (aCase.sender == message.sender && new RegExp(aCase.pattern).test(message.text)) {
+          for (var action of aCase.actions) {
             switch(action.actionType) {
               case "code":
                 result.code = action.payload
                 break
               case "message":
-                let next = result
+                let next: IMessage | undefined = result
                 while (next) {
-                  if(!next.text) {
+                  if (!next.text) {
                     next.text = action.payload
                   } else if (!next.next) {
-                    next.next = {text:''}
+                    next.next = { text: "" }
                   }
                   next = next.next
                 }
@@ -110,10 +112,13 @@ namespace BT.Course {
                 let input = action.payload[0]
                 let output = action.payload[1]
                 let tip = action.payload[2]
+
+                if (!result.code) { throw new Error("code is not defined") }
+
                 let scriptResult = this.runScript(result.code, input)
                 if(!new RegExp(output).test(scriptResult)) {
                   callback({
-                    text:tip + ' : ' + scriptResult
+                    text: tip + ' : ' + scriptResult
                   })
                   return
                 }
@@ -126,7 +131,7 @@ namespace BT.Course {
                 }
                 return
               case "next":
-                result.state = {step: action.payload, context: message.state.context}
+                result.state = {step: action.payload, context: message.state!.context}
                 break
             }
           }
@@ -137,20 +142,25 @@ namespace BT.Course {
 
     private createMapping(course: ICourseModel): IStepsMap {
       let stepsMap = <IStepsMap>{}
-        for (let step of course.steps) {
-          stepsMap[step.name] = step
-        }
+
+      for (let step of course.steps) {
+        stepsMap[step.name] = step
+      }
+
       return stepsMap
     }
 
-    private runScript(script:string, message:string): string {
+    private runScript(script: string, message: string): string {
       let aethr = new Aether()
       // aethr.transpile(script + "; return main('" + message + "');")
       aethr.transpile('return ' + script);
-      if(aethr.problems.errors.length > 0) {
+
+      if (aethr.problems.errors.length > 0) {
         return aethr.problems.errors[0].message
       }
+
       let f = aethr.createFunction()
+
       return f()
     }
 

@@ -8,10 +8,6 @@ namespace BT {
     }))
 
     describe("public methods", () => {
-      it("addMessage(message: IMessage): void", () => {
-        expect(() => { mc.addMessage(null) }).not.toThrowError()
-      })
-
       it("clearMessages(): void", () => {
         expect(() => { mc.clearMessages() }).not.toThrowError()
       })
@@ -55,35 +51,9 @@ namespace BT {
       it("save(): void", () => {
         expect(() => { mc.save() }).not.toThrowError()
       })
-
-      it("setActors(actors: IActor[]): void", () => {
-        expect(() => { mc.setActors(null) }).not.toThrowError()
-      })
-
-      it("setEditor(editor: string): void", () => {
-        expect(() => { mc.setEditor(null) }).not.toThrowError()
-      })
-
-      it("setState(state: Course.IState): void", () => {
-        expect(() => { mc.setState(null) }).not.toThrowError()
-      })
-
-      it("setStorageKey(key: string): void", () => {
-        expect(() => { mc.setStorageKey(null) }).not.toThrowError()
-      })
     })
 
     describe("test addMessage(...)", () => {
-      it("addMessage(undefined)", () => {
-        mc.addMessage(undefined)
-        expect([]).toEqual(mc.getFormattedMessages())
-      })
-
-      it("addMessage(null)", () => {
-        mc.addMessage(null)
-        expect([]).toEqual(mc.getFormattedMessages())
-      })
-
       it("addMessage({actorId: Actor.Person, text: \"text\"})", () => {
         mc.setActors([{actorId: Actor.Person, name: "name", icon: "icon"}])
         mc.addMessage({actorId: Actor.Person, text: "text"})
@@ -178,18 +148,6 @@ namespace BT {
     })
 
     describe("test setActors(...)", () => {
-      it("setActors(undefined)", () => {
-        mc.setActors(undefined)
-        mc.addMessage({actorId: Actor.Person, text: "text"})
-        expect([]).toEqual(mc.getFormattedMessages())
-      })
-
-      it("setActors(null)", () => {
-        mc.setActors(null)
-        mc.addMessage({actorId: Actor.Person, text: "text"})
-        expect([]).toEqual(mc.getFormattedMessages())
-      })
-
       it("setActors({actorId: Actor.Person, name: \"name\", icon: \"icon\"})", () => {
         mc.setActors([{actorId: Actor.Person, name: "name", icon: "icon"}])
         mc.addMessage({actorId: Actor.Person, text: "text"})
