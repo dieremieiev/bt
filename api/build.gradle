@@ -1,69 +1,40 @@
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'appengine'
+buildscript {
+	ext {
+		springBootVersion = '1.4.1.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
 
-//noinspection GroovyUnusedAssignment
-def appId = "bt05062016"
-def appEmail = "dmytro.ieremieiev@gmail.com"
-def appengineVersion = "1.9.38"
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+
+jar {
+	baseName = 'api'
+	version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
-    mavenCentral()
+	mavenCentral()
 }
 
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.21'
-    }
-}
 
 dependencies {
-    appengineSdk "com.google.appengine:appengine-java-sdk:${appengineVersion}"
-    compile "javax.servlet:servlet-api:2.5"
-    compile "com.google.appengine:appengine-api-1.0-sdk:${appengineVersion}"
-    compile "com.google.appengine:appengine-endpoints:${appengineVersion}"
-    compile "com.google.appengine:appengine-endpoints-deps:${appengineVersion}"
-    compile "com.google.appengine:appengine-api-labs:${appengineVersion}"
-    testCompile "com.google.appengine:appengine-api-stubs:${appengineVersion}"
-    compile "com.google.appengine:appengine-tools-sdk:${appengineVersion}"
-    testCompile "com.google.appengine:appengine-testing:${appengineVersion}"
-    testCompile 'junit:junit:4.12'
-    compile 'com.googlecode.objectify:objectify:5.0.3'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'org.yaml:snakeyaml:1.17'
-    compile 'com.google.http-client:google-http-client:1.21.0'
-    compile 'com.google.api-client:google-api-client:1.21.0'
-    compile 'com.google.http-client:google-http-client-jackson2:1.21.0'
-    compile 'com.google.oauth-client:google-oauth-client:1.21.0'
-    compile 'com.google.guava:guava-jdk5:13.0'
-}
-
-//noinspection GroovyUnusedAssignment
-sourceCompatibility = JavaVersion.VERSION_1_7
-//noinspection GroovyUnusedAssignment
-targetCompatibility = JavaVersion.VERSION_1_7
-
-war {
-    from '../ui'
-    exclude('**/node_modules/**')
-    exclude('**/bower_components/ace-builds/demo/**')
-}
-
-appengine {
-    httpPort = 8888
-    downloadSdk = true
-
-    jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
-
-    appcfg {
-        email = "${appEmail}"
-        oauth2= true
-    }
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-actuator-docs')
+//	compile('org.springframework.boot:spring-boot-starter-data-cassandra')
+//	compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
+	compile('org.springframework.boot:spring-boot-starter-jersey')
+	compile('org.springframework.boot:spring-boot-starter-remote-shell')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-websocket')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
 }
