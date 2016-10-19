@@ -1,6 +1,10 @@
 package net.hrobotics.bt;
 
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,8 +22,8 @@ public class ApiApplication {
     @RequestMapping("/")
     @ResponseBody
     public String home() {
-        try (Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
-             Session session = cluster.connect("btkeyspace"))
+        try (Cluster cluster = Cluster.builder().addContactPoint(LOCALHOSTIP).build();
+             Session session = cluster.connect(KEYSPACE))
         {
 //            ResultSet rs = session.execute("select release_version from system.local");
 //            Row row = rs.one();
@@ -31,7 +35,7 @@ public class ApiApplication {
 
             UUID uuid = selectUserEmail(session, email);
 
-//            updateUserEmail(session, email, UUID.randomUUID());
+//            updateUserEmail(session, email, KEY_UUID.randomUUID());
 
 //            deleteUserEmail(session, email);
 
@@ -40,27 +44,28 @@ public class ApiApplication {
     }
 
     private void deleteUserEmail(Session session, String email) {
-        Statement delete = QueryBuilder.delete().from("useremail").where(QueryBuilder.eq("email", email));
+        Statement delete = QueryBuilder.delete().from(KEY_USEREMAIL).where(QueryBuilder.eq(KEY_EMAIL, email));
 
         session.execute(delete);
     }
 
     private void insertUserEmail(Session session, String email, UUID uuid) {
-        Statement insert = QueryBuilder.insertInto("useremail").value("email", email).value("uuid", uuid);
+        Statement insert = QueryBuilder.insertInto(KEY_USEREMAIL).value(KEY_EMAIL, email).value(KEY_UUID, uuid);
 
         session.execute(insert);
     }
 
     private UUID selectUserEmail(Session session, String email) {
-        Statement select = QueryBuilder.select().all().from("useremail").where(QueryBuilder.eq("email", email));
+        Statement select = QueryBuilder.select().all().from(KEY_USEREMAIL).where(QueryBuilder.eq(KEY_EMAIL, email));
 
         ResultSet rs = session.execute(select);
         Row row = rs.one();
-        return row.getUUID("uuid");
+        return row.getUUID(KEY_UUID);
     }
 
     private void updateUserEmail(Session session, String email, UUID uuid) {
-        Statement update = QueryBuilder.update("useremail").with(QueryBuilder.set("uuid", uuid)).where(QueryBuilder.eq("email", email));
+        Statement update = QueryBuilder.update(KEY_USEREMAIL).with(QueryBuilder.set(KEY_UUID, uuid))
+                                       .where(QueryBuilder.eq(KEY_EMAIL, email));
 
         session.execute(update);
     }
@@ -68,4 +73,11 @@ public class ApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
     }
+
+    private static final String LOCALHOSTIP   = "127.0.0.1";
+    private static final String KEYSPACE      = "btkeyspace";
+
+    private static final String KEY_EMAIL     = "email";
+    private static final String KEY_USEREMAIL = "useremail";
+    private static final String KEY_UUID      = "uuid";
 }
