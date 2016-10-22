@@ -37,6 +37,7 @@ public class Storage {
             return uuid.toString();
         }
 */
+
     public Storage() {
         System.out.println("Storage.constructor: " + this);
     }
@@ -107,8 +108,8 @@ public class Storage {
     }
 
 
-
-    private static final String LOCALHOSTIP   = "127.0.0.1";
+    //private static final String LOCALHOSTIP   = "127.0.0.1";
+    private static final String LOCALHOSTIP   = "172.17.0.2";
     private static final String KEYSPACE      = "btkeyspace";
 
     private static final String KEY_EMAIL     = "email";

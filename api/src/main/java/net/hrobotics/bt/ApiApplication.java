@@ -20,7 +20,7 @@ public class ApiApplication {
     @RequestMapping("/")
     @ResponseBody
     public String home() {
-        return storage == null ? "NULL" : storage.toString();
+        return storage == null ? "NULL" : storage.toString() + " - version 4";
     }
 
     public static void main(String[] args) {
