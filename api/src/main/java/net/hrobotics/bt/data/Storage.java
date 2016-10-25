@@ -16,28 +16,6 @@ import java.util.UUID;
 public class Storage {
     private Session session;
 
-/*
-        try (Cluster cluster = Cluster.builder().addContactPoint(LOCALHOSTIP).build();
-             Session session = cluster.connect(KEYSPACE))
-        {
-//            ResultSet rs = session.execute("select release_version from system.local");
-//            Row row = rs.one();
-//            return row.getString("release_version");
-
-            String email = "test@aaa.bbb";
-
-            insertUserEmail(session, email, UUID.randomUUID());
-
-            UUID uuid = selectUserEmail(session, email);
-
-//            updateUserEmail(session, email, KEY_UUID.randomUUID());
-
-//            deleteUserEmail(session, email);
-
-            return uuid.toString();
-        }
-*/
-
     public Storage() {
         System.out.println("Storage.constructor: " + this);
     }
@@ -80,28 +58,32 @@ public class Storage {
         System.out.println("Storage.destroy - end");
     }
 
-    private void deleteUserEmail(String email) {
+    public void deleteUserEmail(String email) {
         Statement delete = QueryBuilder.delete().from(KEY_USEREMAIL).where(QueryBuilder.eq(KEY_EMAIL, email));
 
         session.execute(delete);
     }
 
-    private void insertUserEmail(String email, UUID uuid) {
-        Statement insert = QueryBuilder.insertInto(KEY_USEREMAIL).value(KEY_EMAIL, email).value(KEY_UUID, uuid);
+    public void insertUserEmail(String email, UUID uuid) {
+        Statement insert = QueryBuilder.insertInto(KEY_USEREMAIL).value(KEY_EMAIL, email).value(KEY_USERID, uuid);
 
         session.execute(insert);
     }
 
-    private UUID selectUserEmail(String email) {
+    public UUID selectUserEmail(String email) {
         Statement select = QueryBuilder.select().all().from(KEY_USEREMAIL).where(QueryBuilder.eq(KEY_EMAIL, email));
 
         ResultSet rs = session.execute(select);
+        if (rs == null) { return null; }
+
         Row row = rs.one();
-        return row.getUUID(KEY_UUID);
+        if (row == null) { return null; }
+
+        return row.getUUID(KEY_USERID);
     }
 
-    private void updateUserEmail(String email, UUID uuid) {
-        Statement update = QueryBuilder.update(KEY_USEREMAIL).with(QueryBuilder.set(KEY_UUID, uuid))
+    public void updateUserEmail(String email, UUID uuid) {
+        Statement update = QueryBuilder.update(KEY_USEREMAIL).with(QueryBuilder.set(KEY_USERID, uuid))
                                        .where(QueryBuilder.eq(KEY_EMAIL, email));
 
         session.execute(update);
@@ -114,5 +96,5 @@ public class Storage {
 
     private static final String KEY_EMAIL     = "email";
     private static final String KEY_USEREMAIL = "useremail";
-    private static final String KEY_UUID      = "uuid";
+    private static final String KEY_USERID    = "userid";
 }

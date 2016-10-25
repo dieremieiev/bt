@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.UUID;
+
 @Controller
 @EnableAutoConfiguration
 @SpringBootApplication
@@ -20,10 +22,26 @@ public class ApiApplication {
     @RequestMapping("/")
     @ResponseBody
     public String home() {
-        return storage == null ? "NULL" : storage.toString() + " - version 4";
+        return test();
     }
 
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
+    }
+
+    private String test() {
+        String email = "test@aaa.bbb";
+
+        UUID uuid = storage.selectUserEmail(email);
+
+        boolean b = uuid == null;
+
+        if (b) {
+            storage.insertUserEmail(email, UUID.randomUUID());
+
+            uuid = storage.selectUserEmail(email);
+        }
+
+        return (b ? "INSERTED NEW: " : "EXISTING: ") + (uuid != null ? uuid.toString() : "NULL");
     }
 }
