@@ -22,3 +22,6 @@ docker run --link bt-cassandra -p 8080:8080 -it --rm bt
 
 # cqlsh
 docker run --link bt-cassandra -it --rm cassandra sh -c 'exec cqlsh "$BT_CASSANDRA_PORT_9042_TCP_ADDR"'
+
+# env
+docker run --link bt-cassandra -p 8080:8080 -it --rm bt sh -c 'exec env'
