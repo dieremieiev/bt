@@ -280,13 +280,13 @@ namespace BT {
 
     private static scrollChat(): void {
       let cc = AppController.refChatContainer
-      if (cc === null) { return }
+      if (!cc) { return }
 
       let h = cc.style.height
 
       setTimeout(() => {
         setTimeout(() => {
-          if (cc === null) { return }
+          if (!cc) { return }
 
           cc.style.height = h
 
